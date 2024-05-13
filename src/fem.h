@@ -1,157 +1,153 @@
 #ifndef FEM_RZ_H_
 #define FEM_RZ_H_
 
-#include <algorithm>
 #include <time.h>
 
-#include "sreda.h"
+#include <algorithm>
+
 #include "STRCTRS.h"
 #include "cgm.h"
+#include "sreda.h"
 
-
-// Количество узлов в элементе
+// РљРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ РІ СЌР»РµРјРµРЅС‚Рµ
 #define FEM_XYZ_NODES_NUM 8
 #define FEM_RZ_NODES_NUM 4
 
-class FEM
-{
-	void print_matrix();
-	int find_nel(double x, double y, double z, class MESH& mesh, class STRCTRS& ss, std::vector<double>& q);
-	SREDA sreda;
-	MESH mesh;
+class FEM {
+  void print_matrix();
+  int find_nel(double x, double y, double z, class MESH& mesh, class STRCTRS& ss, std::vector<double>& q);
+  SREDA sreda;
+  MESH mesh;
 
-	SREDA sreda_n;
-	MESH mesh_n;
+  SREDA sreda_n;
+  MESH mesh_n;
 
-	SREDA_RZ sreda_rz;
-	MESH_RZ mesh_rz;
+  SREDA_RZ sreda_rz;
+  MESH_RZ mesh_rz;
 
-	STRCTRS ssxyz, ssxyzn,ssrz;
-	// СЛАУ
-	// ggl - нижний треугольник
-	// di - диагональные элементы
-	std::vector<double>ggl, ggu, di, pr, qrz, q;
-	std::vector<long> ia, ja;
-	std::vector < std::set<long>> A; // Профиль ВСЕЙ матрицы, используется для применения первых краевых
-	std::vector<double> Vns; // Решение двумерной задачи в узлах общей сетки
-	std::vector<double> Vnb; // Решение двумерной задачи в узлах sreda
-	std::vector<double> Va;  // Решение задачи на аномальное поле в узлах sreda 
-	std::vector<double> Vas; // Решение задачи на аномальное поле в узлах общей сетки
-	std::vector<double> Vs; // Сумма решений Vas и Vns
+  STRCTRS ssxyz, ssxyzn, ssrz;
+  // РЎР›РђРЈ
+  // ggl - РЅРёР¶РЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє
+  // di - РґРёР°РіРѕРЅР°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹
+  std::vector<double> ggl, ggu, di, pr, qrz, q;
+  std::vector<long> ia, ja;
+  std::vector<std::set<long>> A;  // РџСЂРѕС„РёР»СЊ Р’РЎР•Р™ РјР°С‚СЂРёС†С‹, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РїСЂРёРјРµРЅРµРЅРёСЏ РїРµСЂРІС‹С… РєСЂР°РµРІС‹С…
+  std::vector<double> Vns;        // Р РµС€РµРЅРёРµ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ СѓР·Р»Р°С… РѕР±С‰РµР№ СЃРµС‚РєРё
+  std::vector<double> Vnb;        // Р РµС€РµРЅРёРµ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ СѓР·Р»Р°С… sreda
+  std::vector<double> Va;         // Р РµС€РµРЅРёРµ Р·Р°РґР°С‡Рё РЅР° Р°РЅРѕРјР°Р»СЊРЅРѕРµ РїРѕР»Рµ РІ СѓР·Р»Р°С… sreda
+  std::vector<double> Vas;        // Р РµС€РµРЅРёРµ Р·Р°РґР°С‡Рё РЅР° Р°РЅРѕРјР°Р»СЊРЅРѕРµ РїРѕР»Рµ РІ СѓР·Р»Р°С… РѕР±С‰РµР№ СЃРµС‚РєРё
+  std::vector<double> Vs;         // РЎСѓРјРјР° СЂРµС€РµРЅРёР№ Vas Рё Vns
 
-	int xi, yi, zi; // Переменные поиска элемента для функции xyz_to_xyz
-	// Статические переменные не используется для корректной работы последовательного расчета 
-public:
-	// filename - 
-	FEM(string filename);
-	void solve(int max_iter, double eps, double relax, std::string solution_filename);
-	void solve_segregation1(int max_iter, double eps, double relax, std::string solution_filename); // rz->xyz :Решение константа на элементе
-	void solve_segregation2(int max_iter, double eps, double relax, std::string solution_filename); // rz->xyz: Решение в узлах элемента
-	void solve_segregation3(int max_iter, double eps, double relax, std::string solution_filename); // rz->xyz: Точки Гауса?
-	void solve_segregation4(int max_iter, double eps, double relax, std::string solution_filename); // rz->xyz: Точки Гауса?
-	void solve_segregation5(int max_iter, double eps, double relax, std::string solution_filename); // rz->xyz: Точки Гауса?
-	void solve_rz(int max_iter, double eps, double relax, std::string solution_filename);
+  int xi, yi, zi;  // РџРµСЂРµРјРµРЅРЅС‹Рµ РїРѕРёСЃРєР° СЌР»РµРјРµРЅС‚Р° РґР»СЏ С„СѓРЅРєС†РёРё xyz_to_xyz
+                   // РЎС‚Р°С‚РёС‡РµСЃРєРёРµ РїРµСЂРµРјРµРЅРЅС‹Рµ РЅРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕР№ СЂР°Р±РѕС‚С‹ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕРіРѕ СЂР°СЃС‡РµС‚Р°
+ public:
+  // filename -
+  FEM(string filename);
+  void solve(int max_iter, double eps, double relax, std::string solution_filename);
+  void solve_segregation1(int max_iter, double eps, double relax, std::string solution_filename);  // rz->xyz :Р РµС€РµРЅРёРµ РєРѕРЅСЃС‚Р°РЅС‚Р° РЅР° СЌР»РµРјРµРЅС‚Рµ
+  void solve_segregation2(int max_iter, double eps, double relax, std::string solution_filename);  // rz->xyz: Р РµС€РµРЅРёРµ РІ СѓР·Р»Р°С… СЌР»РµРјРµРЅС‚Р°
+  void solve_segregation3(int max_iter, double eps, double relax, std::string solution_filename);  // rz->xyz: РўРѕС‡РєРё Р“Р°СѓСЃР°?
+  void solve_segregation4(int max_iter, double eps, double relax, std::string solution_filename);  // rz->xyz: РўРѕС‡РєРё Р“Р°СѓСЃР°?
+  void solve_segregation5(int max_iter, double eps, double relax, std::string solution_filename);  // rz->xyz: РўРѕС‡РєРё Р“Р°СѓСЃР°?
+  void solve_rz(int max_iter, double eps, double relax, std::string solution_filename);
 
-	void solution_xyz_in_points(std::string filename);
-	void solution_rz_in_points(std::string filename);
+  void solution_xyz_in_points(std::string filename);
+  void solution_rz_in_points(std::string filename);
 
-	void save_rz(FEM& fem, string filename);
-	void save_xyz(FEM& fem, string filename);
+  void save_rz(FEM& fem, string filename);
+  void save_xyz(FEM& fem, string filename);
 
+ private:
+  void build_matrix_profile();
+  void build_matrix_profile_rz();
+  void slae_init();
 
-private:
-	void build_matrix_profile();
-	void build_matrix_profile_rz();
-	void slae_init();
-	
-	void add_G(); // Строит матрицу жесткости для задачи xyz без выделения поля
-	void add_b(); // Правая часть для задачи без выделения поля
-	void add_G_sigma_diff(); // Строит матрицу с sigma = sigma(normal) - sigma
-	void add_b_segregation_1(); // Считает правую часть для первого способа выделения поля
-	void add_b_segregation_2(); // Считает правую часть для второго способа выделения поля
-	void add_b_segregation_3(); // Считает правую часть для третьего способа выделения поля
-	void add_b_segregation_4(); // Считает правую часть для четвертого способа выделения поля
-	void add_b_segregation_5(); // Считает правую часть для пятого способа выделения поля
-	void add_b_segregation_3(int NOMEL); // Считает правую часть для третьего способа выделения поля
-	void add_b_segregation_4(int NOMEL); // Считает правую часть для четвертого способа выделения поля
-	void add_b_segregation_5(int NOMEL); // Считает правую часть для пятого способа выделения поля
+  void add_G();                         // РЎС‚СЂРѕРёС‚ РјР°С‚СЂРёС†Сѓ Р¶РµСЃС‚РєРѕСЃС‚Рё РґР»СЏ Р·Р°РґР°С‡Рё xyz Р±РµР· РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b();                         // РџСЂР°РІР°СЏ С‡Р°СЃС‚СЊ РґР»СЏ Р·Р°РґР°С‡Рё Р±РµР· РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_G_sigma_diff();              // РЎС‚СЂРѕРёС‚ РјР°С‚СЂРёС†Сѓ СЃ sigma = sigma(normal) - sigma
+  void add_b_segregation_1();           // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ РїРµСЂРІРѕРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b_segregation_2();           // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ РІС‚РѕСЂРѕРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b_segregation_3();           // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ С‚СЂРµС‚СЊРµРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b_segregation_4();           // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ С‡РµС‚РІРµСЂС‚РѕРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b_segregation_5();           // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ РїСЏС‚РѕРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b_segregation_3(int NOMEL);  // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ С‚СЂРµС‚СЊРµРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b_segregation_4(int NOMEL);  // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ С‡РµС‚РІРµСЂС‚РѕРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
+  void add_b_segregation_5(int NOMEL);  // РЎС‡РёС‚Р°РµС‚ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ РїСЏС‚РѕРіРѕ СЃРїРѕСЃРѕР±Р° РІС‹РґРµР»РµРЅРёСЏ РїРѕР»СЏ
 
-	void add_G_b_rz(); // Строит глобальные матрицу жесткости и вектор правой части для задачи rz
-	void edge_cond_1(); // Первые краевые для задачи xyz
-	void edge_cond_1_rz(); // Первые краевые для задачи rz
+  void add_G_b_rz();      // РЎС‚СЂРѕРёС‚ РіР»РѕР±Р°Р»СЊРЅС‹Рµ РјР°С‚СЂРёС†Сѓ Р¶РµСЃС‚РєРѕСЃС‚Рё Рё РІРµРєС‚РѕСЂ РїСЂР°РІРѕР№ С‡Р°СЃС‚Рё РґР»СЏ Р·Р°РґР°С‡Рё rz
+  void edge_cond_1();     // РџРµСЂРІС‹Рµ РєСЂР°РµРІС‹Рµ РґР»СЏ Р·Р°РґР°С‡Рё xyz
+  void edge_cond_1_rz();  // РџРµСЂРІС‹Рµ РєСЂР°РµРІС‹Рµ РґР»СЏ Р·Р°РґР°С‡Рё rz
 
-	// Выведет заполненность матрицы ненулевыми элементами
-	void print_matrix_plenum(); 
+  // Р’С‹РІРµРґРµС‚ Р·Р°РїРѕР»РЅРµРЅРЅРѕСЃС‚СЊ РјР°С‚СЂРёС†С‹ РЅРµРЅСѓР»РµРІС‹РјРё СЌР»РµРјРµРЅС‚Р°РјРё
+  void print_matrix_plenum();
 
-	// Номер элемента в который попал узел
-	int n_el_xyz(double x, double y, double z);
+  // РќРѕРјРµСЂ СЌР»РµРјРµРЅС‚Р° РІ РєРѕС‚РѕСЂС‹Р№ РїРѕРїР°Р» СѓР·РµР»
+  int n_el_xyz(double x, double y, double z);
 
-	// Перевести решение двумерной задачи в решение трехмерной
-	// 1: Формирует вектор с длиной равной КОЛИЧЕСТВУ УЗЛОВ с решением двумерной задачи в КАЖДОМ ЭЛЕМЕНТЕ
-	void q_rz_to_xyz1(vector<double>& ans, class MESH& mesh, class STRCTRS& ss);
-	// 2: Формирует вектор с длиной равной КОЛИЧЕСТВУ УЗЛОВ с решением двумерной задачи в КАЖДОМ УЗЛЕ
-	void q_rz_to_xyz2(vector<double>& ans, class MESH& mesh, class STRCTRS& ss);
+  // РџРµСЂРµРІРµСЃС‚Рё СЂРµС€РµРЅРёРµ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ СЂРµС€РµРЅРёРµ С‚СЂРµС…РјРµСЂРЅРѕР№
+  // 1: Р¤РѕСЂРјРёСЂСѓРµС‚ РІРµРєС‚РѕСЂ СЃ РґР»РёРЅРѕР№ СЂР°РІРЅРѕР№ РљРћР›РР§Р•РЎРўР’РЈ РЈР—Р›РћР’ СЃ СЂРµС€РµРЅРёРµРј РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ РљРђР–Р”РћРњ Р­Р›Р•РњР•РќРўР•
+  void q_rz_to_xyz1(vector<double>& ans, class MESH& mesh, class STRCTRS& ss);
+  // 2: Р¤РѕСЂРјРёСЂСѓРµС‚ РІРµРєС‚РѕСЂ СЃ РґР»РёРЅРѕР№ СЂР°РІРЅРѕР№ РљРћР›РР§Р•РЎРўР’РЈ РЈР—Р›РћР’ СЃ СЂРµС€РµРЅРёРµРј РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ РљРђР–Р”РћРњ РЈР—Р›Р•
+  void q_rz_to_xyz2(vector<double>& ans, class MESH& mesh, class STRCTRS& ss);
 
+  // РџРµСЂРµРІРµСЃС‚Рё СЂРµС€РµРЅРёРµ С‚СЂРµС…РјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё СЃ РѕРґРЅРѕР№ СЃРµС‚РєРё РІ РґСЂСѓРіСѓСЋ
+  // q1 - РёСЃС…РѕРґРЅС‹Р№ РІРµРєС‚РѕСЂ СЂРµС€РµРЅРёР№
+  // mesh1 - СЃРµС‚РєР° РёСЃС…РѕРґРЅРѕРіРѕ СЂРµС€РµРЅРёСЏ
+  //
+  // q2 - РїРѕР»СѓС‡Р°РµРјС‹Р№ РІРµРєС‚РѕСЂ СЂРµС€РµРЅРёР№
+  // mesh2 - СЃРµС‚РєР° РґР»СЏ РїРѕР»СѓС‡Р°РµРјРѕРіРѕ СЂРµС€РµРЅРёСЏ
+  // ss2 - СЃС‚СЂСѓРєСѓС‚СЂС‹ РїРѕР»СѓС‡Р°РµРјРѕРіРѕ СЂРµС€РµРЅРёСЏ
+  void q_xyz_to_xyz(vector<double>& q1, class MESH& mesh1, class STRCTRS& ss1, vector<double>& q2, class MESH& mesh2, class STRCTRS& ss2);
 
-	// Перевести решение трехмерной задачи с одной сетки в другую
-	// q1 - исходный вектор решений
-	// mesh1 - сетка исходного решения
-	// 
-	// q2 - получаемый вектор решений
-	// mesh2 - сетка для получаемого решения
-	// ss2 - струкутры получаемого решения
-	void q_xyz_to_xyz(vector<double>& q1, class MESH& mesh1,class STRCTRS& ss1, vector<double>& q2, class MESH& mesh2, class STRCTRS& ss2);
+ private:
+  void add_to_sparse(std::vector<long>& ia, std::vector<long>& ja, std::vector<double>& ggl, long str, long col, double x);
+  void replace_in_sparse(vector<long>& ia, vector<long>& ja, vector<double>& ggl, long str, long col, double x);
+  double replace_in_sparse_r(vector<long>& ia, vector<long>& ja, vector<double>& ggl, long str, long col, double x);
+  // РЎР»РѕР¶РµРЅРёРµ РґРІСѓС… РІРµРєС‚РѕСЂРѕРІ x = a + b
+  void vec_vec_sum(std::vector<double>& a, std::vector<double>& b, std::vector<double>& x);
+  // РЈРјРЅРѕР¶РёС‚ РјР°С‚СЂРёС†Сѓ РЅР° РІРµРєС‚РѕСЂ q, СЂРµР·СѓР»СЊС‚Р°С‚ Р±СѓРґРµС‚ РїРѕРјРµС‰РµРЅ РІ РІРµРєС‚РѕСЂ x
+  void matrix_vector_mul(std::vector<double>& q, std::vector<double>& x);
 
-private:
-	void add_to_sparse(std::vector<long>& ia, std::vector<long>& ja, std::vector<double>& ggl, long str, long col, double x);
-	void replace_in_sparse(vector<long>& ia, vector<long>& ja, vector<double>& ggl, long str, long col, double x);
-	double replace_in_sparse_r(vector<long>& ia, vector<long>& ja, vector<double>& ggl, long str, long col, double x);
-	// Сложение двух векторов x = a + b
-	void vec_vec_sum(std::vector<double>& a, std::vector<double>& b, std::vector<double>& x);
-	// Умножит матрицу на вектор q, результат будет помещен в вектор x
-	void matrix_vector_mul(std::vector<double>& q, std::vector<double>& x);
+  void solve_cgm(vector<double>& q, int max_iter, double eps, double relax);
 
-	void solve_cgm(vector<double>& q, int max_iter, double eps, double relax);
+  void local_G(vector<vector<double>>& G, double h_x, double h_y, double h_z, double lambda);
+  void local_G_rz(vector<vector<double>>& G, double h_r, double h_z, double lambda, int i);
+  void local_G_rzn(vector<vector<double>>& G, double h_r, double h_z, double lambda, int i);  // РЈРґР°Р»РёС‚СЊ
+  // -------Р¤СѓРЅРєС†РёРё С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РЅР° РїРѕР»РёРЅРѕРјР°С…---------
+ public:
+  void test_polinome(int max_iter, double eps, double relax, std::string solution_filename);
+  void test_polinome_rz(int max_iter, double eps, double relax, std::string solution_filename);
 
+  double solution_xyz_in_point(double x, double y, double z);  // Р РµС€РµРЅРёРµ С‚СЂРµС…РјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ С‚РѕС‡РєРµ
+  double solution_xyz_in_point(double x, double y, double z,
+                               std::vector<double>& q, class MESH& mesh, class STRCTRS& ss);  // Р РµС€РµРЅРёРµ С‚СЂРµС…РјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РґР»СЏ СЃРµС‚РєРё mesh СЃ СЂРµС€РµРЅРёРµРј q
+  double solution_rz_in_point(double r, double z);                                            // Р’С‹РґР°РµС‚ СЂРµС€РµРЅРёРµ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ С‚РѕС‡РєРµ
+  void grad_rz_in_point(double x, double y, double z, std::vector<double>& grad);             // Р—РЅР°С‡РµРЅРёРµ РіСЂР°РґРёРµРЅС‚Р° РїРѕ РґРµРєР°СЂС‚РѕРІС‹Рј РєРѕРѕСЂРґРёРЅР°С‚Р°Рј РґР»СЏ С†РёР»РёРЅРґСЂРёС‡РµСЃРєРѕР№ Р·Р°РґР°С‡Рё
+  void grad_rz_in_point2(double x, double y, double z, std::vector<double>& grad);            // Р—РЅР°С‡РµРЅРёРµ РіСЂР°РґРёРµРЅС‚Р° РїРѕ РґРµРєР°СЂС‚РѕРІС‹Рј РєРѕРѕСЂРґРёРЅР°С‚Р°Рј РґР»СЏ С†РёР»РёРЅРґСЂРёС‡РµСЃРєРѕР№ Р·Р°РґР°С‡Рё
+  void solution_export(class MESH& mesh, std::string solution_filename, std::vector<double>& solution);
+  void solution_rz_export(std::string filename);
 
-	void local_G(vector<vector<double>>& G, double h_x, double h_y, double h_z, double lambda);
-	void local_G_rz(vector<vector<double>>& G, double h_r, double h_z, double lambda, int i);
-	void local_G_rzn(vector<vector<double>>& G, double h_r, double h_z, double lambda, int i); //Удалить
-	// -------Функции тестирования на полиномах---------
-public:
-	void test_polinome(int max_iter, double eps, double relax, std::string solution_filename);
-	void test_polinome_rz(int max_iter, double eps, double relax, std::string solution_filename);
-	
-	double solution_xyz_in_point(double x, double y, double z); // Решение трехмерной задачи в точке
-	double solution_xyz_in_point(double x, double y, double z,
-		std::vector<double>& q, class MESH& mesh, class STRCTRS& ss); // Решение трехмерной задачи для сетки mesh с решением q
-	double solution_rz_in_point(double r, double z); // Выдает решение двумерной задачи в точке
-	void grad_rz_in_point(double x, double y, double z, std::vector<double>& grad); // Значение градиента по декартовым координатам для цилиндрической задачи
-	void grad_rz_in_point2(double x, double y, double z, std::vector<double>& grad); // Значение градиента по декартовым координатам для цилиндрической задачи
-	void solution_export(class MESH& mesh, std::string solution_filename, std::vector<double>& solution);
-	void solution_rz_export(std::string filename);
+  void solution_rz_to_xyz2(std::string filename);  // РџРµСЂРµРІРµРґРµС‚ С‚РѕС‡РєРё СЂРµС€РµРЅРёСЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё РІ С‚СЂРµС…РјРµСЂРЅСѓСЋ
+ private:
+  void add_G_b_p();  // РЎС‡РёС‚Р°РµС‚ РіР»РѕР±Р°Р»СЊРЅСѓСЋ РјР°С‚СЂРёС†Сѓ Р¶РµСЃС‚РєРѕСЃС‚Рё Рё РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ
+  void add_G_b_rz_p();
+  void edge_cond_1_p();
+  void edge_cond_1_rz_p();
+  void print_solution_p_miss();
+  void print_solution_rz_p_miss();  // РќРѕСЂРјР° РІРµРєС‚РѕСЂР° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕР№ РїРѕРіСЂРµС€РЅРѕСЃС‚Рё СЂРµС€РµРЅРёСЏ
 
-	void solution_rz_to_xyz2(std::string filename); // Переведет точки решения двумерной задачи в трехмерную
-private:
-	void add_G_b_p(); // Считает глобальную матрицу жесткости и правую часть
-	void add_G_b_rz_p();
-	void edge_cond_1_p();
-	void edge_cond_1_rz_p();
-	void print_solution_p_miss();
-	void print_solution_rz_p_miss(); // Норма вектора относительной погрешности решения
+  // u - РёСЃРєРѕРјР°СЏ С„СѓРЅРєС†РёСЏ РґРёС„С„РµСЂРµРЅС†РёР°Р»СЊРЅРѕРіРѕ СѓСЂР°РІРЅРµРЅРёСЏ
+  // f - С„СѓРЅРєС†РёСЏ РїСЂР°РІРѕР№ С‡Р°СЃС‚Рё РґРёС„С„РµСЂРµРЅС†РёР°Р»СЊРЅРѕРіРѕ СѓСЂР°РІРЅРµРЅРёСЏ
+  double u(double x, double y, double z);
+  double f(double x, double y, double z);
+  double u_rz(double r, double z);
+  double f_rz(double r, double z);
 
-	// u - искомая функция дифференциального уравнения
-	// f - функция правой части дифференциального уравнения
-	double u(double x, double y, double z);
-	double f(double x, double y, double z);
-	double u_rz(double r, double z);
-	double f_rz(double r, double z);
-
-	// Cчитает локальную правую часть
-	void local_b_p(vector<double>& b, double h_x, double h_y, double h_z, int i);
-	void local_b_rz_p(vector<double>& b, double h_r, double h_z, int i); // тест на полином
-	void local_b_rz_pn(vector<double>& b, double h_r, double h_z, int i); // удалить
-	//---------------------------------------------------
+  // CС‡РёС‚Р°РµС‚ Р»РѕРєР°Р»СЊРЅСѓСЋ РїСЂР°РІСѓСЋ С‡Р°СЃС‚СЊ
+  void local_b_p(vector<double>& b, double h_x, double h_y, double h_z, int i);
+  void local_b_rz_p(vector<double>& b, double h_r, double h_z, int i);   // С‚РµСЃС‚ РЅР° РїРѕР»РёРЅРѕРј
+  void local_b_rz_pn(vector<double>& b, double h_r, double h_z, int i);  // СѓРґР°Р»РёС‚СЊ
+                                                                         //---------------------------------------------------
 };
 
-#endif // FEM_RZ_H_
+#endif  // FEM_RZ_H_

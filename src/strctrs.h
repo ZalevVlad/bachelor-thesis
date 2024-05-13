@@ -4,43 +4,40 @@
 #include "mesh.h"
 #include "sreda.h"
 
-class STRCTRS
-{
-public:
-    vector<vector<int>> nvtr; // mesh.kel записей номеров узлов элементов
-    vector<int> nvkat2d;  // mesh.kel записей номеров материала элементов
-    vector<int> nvkat2dr;  // mesh.kel записей номеров материалов элементов для нормального поля
-    vector<vector<double>> coord; // mesh.kuzlov координат точек
-    vector<int> l1; // номера узлов с первыми краевыми условиями
+class STRCTRS {
+ public:
+  vector<vector<int>> nvtr;      // mesh.kel Р·Р°РїРёСЃРµР№ РЅРѕРјРµСЂРѕРІ СѓР·Р»РѕРІ СЌР»РµРјРµРЅС‚РѕРІ
+  vector<int> nvkat2d;           // mesh.kel Р·Р°РїРёСЃРµР№ РЅРѕРјРµСЂРѕРІ РјР°С‚РµСЂРёР°Р»Р° СЌР»РµРјРµРЅС‚РѕРІ
+  vector<int> nvkat2dr;          // mesh.kel Р·Р°РїРёСЃРµР№ РЅРѕРјРµСЂРѕРІ РјР°С‚РµСЂРёР°Р»РѕРІ СЌР»РµРјРµРЅС‚РѕРІ РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ РїРѕР»СЏ
+  vector<vector<double>> coord;  // mesh.kuzlov РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє
+  vector<int> l1;                // РЅРѕРјРµСЂР° СѓР·Р»РѕРІ СЃ РїРµСЂРІС‹РјРё РєСЂР°РµРІС‹РјРё СѓСЃР»РѕРІРёСЏРјРё
 
-public: // Вызов функций генерации структур
-    void gen_structures(SREDA& sreda, MESH& mesh);
-    void gen_structures_rz(SREDA& sreda, MESH_RZ& mesh);
+ public:  // Р’С‹Р·РѕРІ С„СѓРЅРєС†РёР№ РіРµРЅРµСЂР°С†РёРё СЃС‚СЂСѓРєС‚СѓСЂ
+  void gen_structures(SREDA& sreda, MESH& mesh);
+  void gen_structures_rz(SREDA& sreda, MESH_RZ& mesh);
 
-    void gen_structures_p(SREDA& sreda, MESH& mesh);
-    void gen_structures_rz_p(SREDA& sreda, MESH_RZ& mesh); // Тест на полиномах
+  void gen_structures_p(SREDA& sreda, MESH& mesh);
+  void gen_structures_rz_p(SREDA& sreda, MESH_RZ& mesh);  // РўРµСЃС‚ РЅР° РїРѕР»РёРЅРѕРјР°С…
 
+ private:  // Р¤СѓРЅРєС†РёРё РіРµРЅРµСЂР°С†РёРё СЃС‚СЂСѓРєС‚СѓСЂ РґР»СЏ С‚СЂРµС…РјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
+  void gen_nvtr(class MESH& mesh);
+  void gen_coord(class MESH& mesh);
+  void gen_nvkat2d(class SREDA& sreda, class MESH& mesh);
+  void gen_nvkat2dr(class SREDA& sreda, class MESH& mesh);  // РќРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»РѕРІ РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№ Р·Р°РґР°С‡Рё
+  void gen_l1(class MESH& mesh, vector<double>& edge_conditions);
+  void gen_l1_p(class MESH& mesh, vector<double>& edge_conditions);
 
-private: // Функции генерации структур для трехмерной задачи
-    void gen_nvtr(class MESH& mesh);
-    void gen_coord(class MESH& mesh);
-    void gen_nvkat2d(class SREDA& sreda, class MESH& mesh);
-    void gen_nvkat2dr(class SREDA& sreda, class MESH& mesh); // Номера материалов для нормальной задачи
-    void gen_l1(class MESH& mesh, vector<double>& edge_conditions); 
-    void gen_l1_p(class MESH& mesh, vector<double>& edge_conditions);
+ private:  // Р¤СѓРЅРєС†РёРё РіРµРЅРµСЂР°С†РёРё СЃС‚СЂСѓРєС‚СѓСЂ РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
+  void gen_nvtr_rz(class MESH_RZ& mesh);
+  void gen_coord_rz(class MESH_RZ& mesh);
+  void gen_nvkat2d_rz(class MESH_RZ& mesh, class SREDA& sreda);
+  void gen_l1_rz(class MESH_RZ& mesh, vector<double>& edge_conditions);
+  void gen_l1_rz_p(class MESH_RZ& mesh, vector<double>& edge_conditions);  // РўРµСЃС‚ РЅР° РїРѕР»РёРЅРѕРјР°С…
 
-private: // Функции генерации структур для двумерной задачи
-    void gen_nvtr_rz(class MESH_RZ& mesh);
-    void gen_coord_rz(class MESH_RZ& mesh);
-    void gen_nvkat2d_rz(class MESH_RZ& mesh, class SREDA& sreda);
-    void gen_l1_rz(class MESH_RZ& mesh, vector<double>& edge_conditions);
-    void gen_l1_rz_p(class MESH_RZ& mesh, vector<double>& edge_conditions); // Тест на полиномах
-
-
-private:
-    int get_mat_from_sreda_reverse(class SREDA& sreda, double x, double y, double z);
-    int get_mat_from_sreda_direct(class SREDA& sreda, double x, double y, double z);
-    int get_mat_from_sreda_rz(class SREDA& sreda, double z);
+ private:
+  int get_mat_from_sreda_reverse(class SREDA& sreda, double x, double y, double z);
+  int get_mat_from_sreda_direct(class SREDA& sreda, double x, double y, double z);
+  int get_mat_from_sreda_rz(class SREDA& sreda, double z);
 };
 
-#endif // STRCTRS_H_
+#endif  // STRCTRS_H_

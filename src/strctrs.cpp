@@ -1,276 +1,313 @@
 #include "STRCTRS.h"
 
-// Генерирует номера узлов элементов для трехмерной сетки
-void STRCTRS::gen_nvtr(class MESH& mesh)
-{
-	double kel = mesh.kel;
-	nvtr.resize(mesh.kel);
-	for (int i = 0; i < kel; i++) { nvtr[i].resize(8); }
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° СѓР·Р»РѕРІ СЌР»РµРјРµРЅС‚РѕРІ РґР»СЏ С‚СЂРµС…РјРµСЂРЅРѕР№ СЃРµС‚РєРё
+void STRCTRS::gen_nvtr(class MESH& mesh) {
+  double kel = mesh.kel;
+  nvtr.resize(mesh.kel);
+  for (int i = 0; i < kel; i++) {
+    nvtr[i].resize(8);
+  }
 
-	int x, y, z;
-	// Количество элементов в слое x
-	int kx = (mesh.x.size() - 1);
-	// Количество элементов в слое xy
-	int kxy = (mesh.x.size() - 1) * (mesh.y.size() - 1);
-	for (int i = 0; i < kel; i++) {
-		x = i % kx + 1;
-		y = (i % kxy) / (kx)+1;
-		z = i / kxy + 1;
+  int x, y, z;
+  // РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РІ СЃР»РѕРµ x
+  int kx = (mesh.x.size() - 1);
+  // РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РІ СЃР»РѕРµ xy
+  int kxy = (mesh.x.size() - 1) * (mesh.y.size() - 1);
+  for (int i = 0; i < kel; i++) {
+    x = i % kx + 1;
+    y = (i % kxy) / (kx) + 1;
+    z = i / kxy + 1;
 
-		nvtr[i][0] = x + (y - 1) * (kx + 1) + (z - 1) * mesh.x.size() * mesh.y.size();
-		nvtr[i][1] = nvtr[i][0] + 1;
-		nvtr[i][2] = nvtr[i][0] + mesh.x.size();
-		nvtr[i][3] = nvtr[i][2] + 1;
-		nvtr[i][4] = nvtr[i][0] + mesh.x.size() * mesh.y.size();
-		nvtr[i][5] = nvtr[i][4] + 1;
-		nvtr[i][6] = nvtr[i][4] + mesh.x.size();
-		nvtr[i][7] = nvtr[i][6] + 1;
-	}
+    nvtr[i][0] = x + (y - 1) * (kx + 1) + (z - 1) * mesh.x.size() * mesh.y.size();
+    nvtr[i][1] = nvtr[i][0] + 1;
+    nvtr[i][2] = nvtr[i][0] + mesh.x.size();
+    nvtr[i][3] = nvtr[i][2] + 1;
+    nvtr[i][4] = nvtr[i][0] + mesh.x.size() * mesh.y.size();
+    nvtr[i][5] = nvtr[i][4] + 1;
+    nvtr[i][6] = nvtr[i][4] + mesh.x.size();
+    nvtr[i][7] = nvtr[i][6] + 1;
+  }
 }
 
-// Генерирует номера узлов элементов для двумерной сетки
-void STRCTRS::gen_nvtr_rz(class MESH_RZ& mesh)
-{
-	double kel = mesh.kel;
-	nvtr.resize(mesh.kel);
-	for (int i = 0; i < kel; i++) { nvtr[i].resize(4); }
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° СѓР·Р»РѕРІ СЌР»РµРјРµРЅС‚РѕРІ РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ СЃРµС‚РєРё
+void STRCTRS::gen_nvtr_rz(class MESH_RZ& mesh) {
+  double kel = mesh.kel;
+  nvtr.resize(mesh.kel);
+  for (int i = 0; i < kel; i++) {
+    nvtr[i].resize(4);
+  }
 
-	int n;
-	for (int i = 0; i < kel; i++) {
-		n = i / (mesh.r.size() - 1) * (mesh.r.size()) + i % (mesh.r.size() - 1) + 1;
+  int n;
+  for (int i = 0; i < kel; i++) {
+    n = i / (mesh.r.size() - 1) * (mesh.r.size()) + i % (mesh.r.size() - 1) + 1;
 
-		nvtr[i][0] = n;
-		nvtr[i][1] = n + 1;
-		nvtr[i][2] = n + mesh.r.size();
-		nvtr[i][3] = n + mesh.r.size() + 1;
-
-	}
+    nvtr[i][0] = n;
+    nvtr[i][1] = n + 1;
+    nvtr[i][2] = n + mesh.r.size();
+    nvtr[i][3] = n + mesh.r.size() + 1;
+  }
 }
 
-// Генерирует координаты узлов трехмерной сетки
-void STRCTRS::gen_coord(class MESH& mesh){
-	coord.resize(mesh.kuzlov);
-	int xs = mesh.x.size();
-	int ys = mesh.y.size();
-	int zs = mesh.z.size();
-	int x, y, z;
-	for (int i = 0; i < mesh.kuzlov; i++) {
-		x = i % xs;
-		y = (i % (xs * ys)) / xs;
-		z = i / (xs * ys);
-		coord[i].resize(3);
-		coord[i] = { mesh.x[x], mesh.y[y], mesh.z[z] };
-	}
-
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РєРѕРѕСЂРґРёРЅР°С‚С‹ СѓР·Р»РѕРІ С‚СЂРµС…РјРµСЂРЅРѕР№ СЃРµС‚РєРё
+void STRCTRS::gen_coord(class MESH& mesh) {
+  coord.resize(mesh.kuzlov);
+  int xs = mesh.x.size();
+  int ys = mesh.y.size();
+  int zs = mesh.z.size();
+  int x, y, z;
+  for (int i = 0; i < mesh.kuzlov; i++) {
+    x = i % xs;
+    y = (i % (xs * ys)) / xs;
+    z = i / (xs * ys);
+    coord[i].resize(3);
+    coord[i] = {mesh.x[x], mesh.y[y], mesh.z[z]};
+  }
 }
 
-// Генерирует коориднаты узлов двумерной сетки
-void STRCTRS::gen_coord_rz(class MESH_RZ& mesh){
-	coord.resize(mesh.kuzlov);
-	int rs = mesh.r.size();
-	int zs = mesh.z.size();
-	int r, h;
-	for (int i = 0; i < mesh.kuzlov; i++) {
-		r = i % rs;
-		h = i / rs;
-		coord[i].resize(2);
-		coord[i] = { mesh.r[r], mesh.z[h] };
-	}
-
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РєРѕРѕСЂРёРґРЅР°С‚С‹ СѓР·Р»РѕРІ РґРІСѓРјРµСЂРЅРѕР№ СЃРµС‚РєРё
+void STRCTRS::gen_coord_rz(class MESH_RZ& mesh) {
+  coord.resize(mesh.kuzlov);
+  int rs = mesh.r.size();
+  int zs = mesh.z.size();
+  int r, h;
+  for (int i = 0; i < mesh.kuzlov; i++) {
+    r = i % rs;
+    h = i / rs;
+    coord[i].resize(2);
+    coord[i] = {mesh.r[r], mesh.z[h]};
+  }
 }
 
-// По кооринатам определит номера материала
-// Обход обратный: будет получен материал аномального поля, если он не существует, то нормального
+// РџРѕ РєРѕРѕСЂРёРЅР°С‚Р°Рј РѕРїСЂРµРґРµР»РёС‚ РЅРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»Р°
+// РћР±С…РѕРґ РѕР±СЂР°С‚РЅС‹Р№: Р±СѓРґРµС‚ РїРѕР»СѓС‡РµРЅ РјР°С‚РµСЂРёР°Р» Р°РЅРѕРјР°Р»СЊРЅРѕРіРѕ РїРѕР»СЏ, РµСЃР»Рё РѕРЅ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, С‚Рѕ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ
 int STRCTRS::get_mat_from_sreda_reverse(class SREDA& sreda, double x, double y, double z) {
-	// Будем обходить подобласти в обратном порядке (учитывая что в файле среда подоблости заданны вложением по порядку)
-	for (int i = sreda.elms.size() - 1; i >= 0; i--) {
-		/*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
-		if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
-			sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
-			sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
-			return sreda.elms[i][MAT_N];
-		}
-	}
-	return 0;
+  // Р‘СѓРґРµРј РѕР±С…РѕРґРёС‚СЊ РїРѕРґРѕР±Р»Р°СЃС‚Рё РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ (СѓС‡РёС‚С‹РІР°СЏ С‡С‚Рѕ РІ С„Р°Р№Р»Рµ СЃСЂРµРґР° РїРѕРґРѕР±Р»РѕСЃС‚Рё Р·Р°РґР°РЅРЅС‹ РІР»РѕР¶РµРЅРёРµРј РїРѕ РїРѕСЂСЏРґРєСѓ)
+  for (int i = sreda.elms.size() - 1; i >= 0; i--) {
+    /*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
+    if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
+        sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
+        sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
+      return sreda.elms[i][MAT_N];
+    }
+  }
+  return 0;
 }
 
-// По кооринатам определит номера материала
-// Обход прямой: в первую очередь будет получен материал нормального поля
+// РџРѕ РєРѕРѕСЂРёРЅР°С‚Р°Рј РѕРїСЂРµРґРµР»РёС‚ РЅРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»Р°
+// РћР±С…РѕРґ РїСЂСЏРјРѕР№: РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ Р±СѓРґРµС‚ РїРѕР»СѓС‡РµРЅ РјР°С‚РµСЂРёР°Р» РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ РїРѕР»СЏ
 int STRCTRS::get_mat_from_sreda_direct(class SREDA& sreda, double x, double y, double z) {
-	// Будем обходить подобласти в обратном порядке (учитывая что в файле среда подоблости заданны вложением по порядку)
-	for (int i = 0; i< sreda.elms.size(); i++) {
-		/*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
-		if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
-			sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
-			sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
-			return sreda.elms[i][MAT_N];
-		}
-	}
-	return 0;
+  // Р‘СѓРґРµРј РѕР±С…РѕРґРёС‚СЊ РїРѕРґРѕР±Р»Р°СЃС‚Рё РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ (СѓС‡РёС‚С‹РІР°СЏ С‡С‚Рѕ РІ С„Р°Р№Р»Рµ СЃСЂРµРґР° РїРѕРґРѕР±Р»РѕСЃС‚Рё Р·Р°РґР°РЅРЅС‹ РІР»РѕР¶РµРЅРёРµРј РїРѕ РїРѕСЂСЏРґРєСѓ)
+  for (int i = 0; i < sreda.elms.size(); i++) {
+    /*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
+    if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
+        sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
+        sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
+      return sreda.elms[i][MAT_N];
+    }
+  }
+  return 0;
 }
 
-// По кооринатам определит номер материала для двумерной задачи
+// РџРѕ РєРѕРѕСЂРёРЅР°С‚Р°Рј РѕРїСЂРµРґРµР»РёС‚ РЅРѕРјРµСЂ РјР°С‚РµСЂРёР°Р»Р° РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 int STRCTRS::get_mat_from_sreda_rz(class SREDA& sreda, double z) {
-	// Будем обходить подобласти в прямом порядке (учитывая что в файле среда подоблости заданны вложением по порядку)
-	// Считается, что для двумерной задачи элементы, которые не располагаются от начала до конца границы являются аномальными
-	for (int i = 0; i < sreda.elms.size(); i++) {
-		if (sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
-			return sreda.elms[i][MAT_N];
-		}
-	}
-	return 0;
+  // Р‘СѓРґРµРј РѕР±С…РѕРґРёС‚СЊ РїРѕРґРѕР±Р»Р°СЃС‚Рё РІ РїСЂСЏРјРѕРј РїРѕСЂСЏРґРєРµ (СѓС‡РёС‚С‹РІР°СЏ С‡С‚Рѕ РІ С„Р°Р№Р»Рµ СЃСЂРµРґР° РїРѕРґРѕР±Р»РѕСЃС‚Рё Р·Р°РґР°РЅРЅС‹ РІР»РѕР¶РµРЅРёРµРј РїРѕ РїРѕСЂСЏРґРєСѓ)
+  // РЎС‡РёС‚Р°РµС‚СЃСЏ, С‡С‚Рѕ РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё СЌР»РµРјРµРЅС‚С‹, РєРѕС‚РѕСЂС‹Рµ РЅРµ СЂР°СЃРїРѕР»Р°РіР°СЋС‚СЃСЏ РѕС‚ РЅР°С‡Р°Р»Р° РґРѕ РєРѕРЅС†Р° РіСЂР°РЅРёС†С‹ СЏРІР»СЏСЋС‚СЃСЏ Р°РЅРѕРјР°Р»СЊРЅС‹РјРё
+  for (int i = 0; i < sreda.elms.size(); i++) {
+    if (sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
+      return sreda.elms[i][MAT_N];
+    }
+  }
+  return 0;
 }
 
-// Генерирует номера материалов параллелепипедов для трехмерной задачи
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»РѕРІ РїР°СЂР°Р»Р»РµР»РµРїРёРїРµРґРѕРІ РґР»СЏ С‚СЂРµС…РјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 void STRCTRS::gen_nvkat2d(class SREDA& sreda, class MESH& mesh) {
-	nvkat2d.resize(mesh.kel);
-	double x, y, z;
-	for (int i = 0; i < mesh.kel; i++) {
-		// Координаты центров элементов
-		x = (coord[nvtr[i][0] - 1][0] + coord[nvtr[i][1] - 1][0]) / 2.;
-		y = (coord[nvtr[i][0] - 1][1] + coord[nvtr[i][2] - 1][1]) / 2.;
-		z = (coord[nvtr[i][0] - 1][2] + coord[nvtr[i][4] - 1][2]) / 2.;
-		nvkat2d[i] = get_mat_from_sreda_reverse(sreda, x, y, z);
-	}
+  nvkat2d.resize(mesh.kel);
+  double x, y, z;
+  for (int i = 0; i < mesh.kel; i++) {
+    // РљРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂРѕРІ СЌР»РµРјРµРЅС‚РѕРІ
+    x = (coord[nvtr[i][0] - 1][0] + coord[nvtr[i][1] - 1][0]) / 2.;
+    y = (coord[nvtr[i][0] - 1][1] + coord[nvtr[i][2] - 1][1]) / 2.;
+    z = (coord[nvtr[i][0] - 1][2] + coord[nvtr[i][4] - 1][2]) / 2.;
+    nvkat2d[i] = get_mat_from_sreda_reverse(sreda, x, y, z);
+  }
 }
 
 void STRCTRS::gen_nvkat2dr(class SREDA& sreda, class MESH& mesh) {
-	nvkat2dr.resize(mesh.kel);
-	double x, y, z;
-	for (int i = 0; i < mesh.kel; i++) {
-		// Координаты центров элементов
-		x = (coord[nvtr[i][0] - 1][0] + coord[nvtr[i][1] - 1][0]) / 2.;
-		y = (coord[nvtr[i][0] - 1][1] + coord[nvtr[i][2] - 1][1]) / 2.;
-		z = (coord[nvtr[i][0] - 1][2] + coord[nvtr[i][4] - 1][2]) / 2.;
-		nvkat2dr[i] = get_mat_from_sreda_direct(sreda, x, y, z);
-	}
+  nvkat2dr.resize(mesh.kel);
+  double x, y, z;
+  for (int i = 0; i < mesh.kel; i++) {
+    // РљРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂРѕРІ СЌР»РµРјРµРЅС‚РѕРІ
+    x = (coord[nvtr[i][0] - 1][0] + coord[nvtr[i][1] - 1][0]) / 2.;
+    y = (coord[nvtr[i][0] - 1][1] + coord[nvtr[i][2] - 1][1]) / 2.;
+    z = (coord[nvtr[i][0] - 1][2] + coord[nvtr[i][4] - 1][2]) / 2.;
+    nvkat2dr[i] = get_mat_from_sreda_direct(sreda, x, y, z);
+  }
 }
 
-// Генерирует номера материалов прямоугольников для двумерной задачи
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»РѕРІ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 void STRCTRS::gen_nvkat2d_rz(class MESH_RZ& mesh, class SREDA& sreda) {
-	nvkat2d.resize(mesh.kel);
-	double r, z;
-	for (int i = 0; i < mesh.kel; i++) {
-		// Координаты центров элементов
-		//r = (coord[nvtr[i][0] - 1][0] + coord[nvtr[i][1] - 1][0]) / 2.;
-		z = (coord[nvtr[i][0] - 1][1] + coord[nvtr[i][2] - 1][1]) / 2.;
-		nvkat2d[i] = get_mat_from_sreda_rz(sreda, z);
-	}
+  nvkat2d.resize(mesh.kel);
+  double r, z;
+  for (int i = 0; i < mesh.kel; i++) {
+    // РљРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂРѕРІ СЌР»РµРјРµРЅС‚РѕРІ
+    // r = (coord[nvtr[i][0] - 1][0] + coord[nvtr[i][1] - 1][0]) / 2.;
+    z = (coord[nvtr[i][0] - 1][1] + coord[nvtr[i][2] - 1][1]) / 2.;
+    nvkat2d[i] = get_mat_from_sreda_rz(sreda, z);
+  }
 }
 
-// Генерирует номера узлов с первыми нулевыми краевыми для трехмерной задачи
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° СѓР·Р»РѕРІ СЃ РїРµСЂРІС‹РјРё РЅСѓР»РµРІС‹РјРё РєСЂР°РµРІС‹РјРё РґР»СЏ С‚СЂРµС…РјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 void STRCTRS::gen_l1(class MESH& mesh, vector<double>& edge_conditions) {
-	l1.resize(0);
-	set<int> buff;
-	for (int i = 0; i < mesh.kuzlov; i++) {
-		// Если указано, что на грани x = x0 заданы первые краевые,
-		// то если координата текущей точки совпадает с x0, тогда добавить ее номер.
-		// С остальными гранями аналогично
-		if (edge_conditions[L1_X0]) { if (coord[i][0] == mesh.x[0]) { buff.insert(i + 1); } }
-		if (edge_conditions[L1_X1]) { if (coord[i][0] == mesh.x[mesh.x.size() - 1]) { buff.insert(i + 1); } }
+  l1.resize(0);
+  set<int> buff;
+  for (int i = 0; i < mesh.kuzlov; i++) {
+    // Р•СЃР»Рё СѓРєР°Р·Р°РЅРѕ, С‡С‚Рѕ РЅР° РіСЂР°РЅРё x = x0 Р·Р°РґР°РЅС‹ РїРµСЂРІС‹Рµ РєСЂР°РµРІС‹Рµ,
+    // С‚Рѕ РµСЃР»Рё РєРѕРѕСЂРґРёРЅР°С‚Р° С‚РµРєСѓС‰РµР№ С‚РѕС‡РєРё СЃРѕРІРїР°РґР°РµС‚ СЃ x0, С‚РѕРіРґР° РґРѕР±Р°РІРёС‚СЊ РµРµ РЅРѕРјРµСЂ.
+    // РЎ РѕСЃС‚Р°Р»СЊРЅС‹РјРё РіСЂР°РЅСЏРјРё Р°РЅР°Р»РѕРіРёС‡РЅРѕ
+    if (edge_conditions[L1_X0]) {
+      if (coord[i][0] == mesh.x[0]) {
+        buff.insert(i + 1);
+      }
+    }
+    if (edge_conditions[L1_X1]) {
+      if (coord[i][0] == mesh.x[mesh.x.size() - 1]) {
+        buff.insert(i + 1);
+      }
+    }
 
-		if (edge_conditions[L1_Y0]) { if (coord[i][1] == mesh.y[0]) { buff.insert(i + 1); } }
-		if (edge_conditions[L1_Y1]) { if (coord[i][1] == mesh.y[mesh.y.size() - 1]) { buff.insert(i + 1); } }
+    if (edge_conditions[L1_Y0]) {
+      if (coord[i][1] == mesh.y[0]) {
+        buff.insert(i + 1);
+      }
+    }
+    if (edge_conditions[L1_Y1]) {
+      if (coord[i][1] == mesh.y[mesh.y.size() - 1]) {
+        buff.insert(i + 1);
+      }
+    }
 
-		if (edge_conditions[L1_Z0]) { if (coord[i][2] == mesh.z[0]) { buff.insert(i + 1); } }
-		if (edge_conditions[L1_Z1]) { if (coord[i][2] == mesh.z[mesh.z.size() - 1]) { buff.insert(i + 1); } }
-	}
-	l1.insert(l1.begin(), buff.begin(), buff.end());
+    if (edge_conditions[L1_Z0]) {
+      if (coord[i][2] == mesh.z[0]) {
+        buff.insert(i + 1);
+      }
+    }
+    if (edge_conditions[L1_Z1]) {
+      if (coord[i][2] == mesh.z[mesh.z.size() - 1]) {
+        buff.insert(i + 1);
+      }
+    }
+  }
+  l1.insert(l1.begin(), buff.begin(), buff.end());
 }
-// Генерирует номера узлов с первыми нулевыми краевыми для двумерной задачи
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° СѓР·Р»РѕРІ СЃ РїРµСЂРІС‹РјРё РЅСѓР»РµРІС‹РјРё РєСЂР°РµРІС‹РјРё РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 void STRCTRS::gen_l1_rz(class MESH_RZ& mesh, vector<double>& edge_conditions) {
-	l1.resize(0);
-	set<int> buff;
-	/* Краевые условия в двумерной задаче заданы следующим образом
+  l1.resize(0);
+  set<int> buff;
+  /* РљСЂР°РµРІС‹Рµ СѓСЃР»РѕРІРёСЏ РІ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рµ Р·Р°РґР°РЅС‹ СЃР»РµРґСѓСЋС‰РёРј РѕР±СЂР°Р·РѕРј
 
-	   S2=0
-	 ----------
-	 |        |
+     S2=0
+   ----------
+   |        |
 s2=0 |        | S1 = 0
-	 |        |
-	 ----------
-		S1 = 0
-	 */
-	for (int i = 0; i < mesh.kuzlov; i++) {
-		if (coord[i][0] == mesh.r[mesh.r.size() - 1]) { buff.insert(i + 1); }
-		else if (coord[i][1] == mesh.z[mesh.z.size() - 1]) { buff.insert(i + 1); }
-	}
-	l1.insert(l1.begin(), buff.begin(), buff.end());
+   |        |
+   ----------
+    S1 = 0
+   */
+  for (int i = 0; i < mesh.kuzlov; i++) {
+    if (coord[i][0] == mesh.r[mesh.r.size() - 1]) {
+      buff.insert(i + 1);
+    } else if (coord[i][1] == mesh.z[mesh.z.size() - 1]) {
+      buff.insert(i + 1);
+    }
+  }
+  l1.insert(l1.begin(), buff.begin(), buff.end());
 }
 
 void STRCTRS::gen_l1_p(class MESH& mesh, vector<double>& edge_conditions) {
-	l1.resize(0);
-	set<int> buff;
-	for (int i = 0; i < mesh.kuzlov; i++) {
-		// Для теста на полином зададим первые краевые на всех границах
-		if (coord[i][0] == mesh.x[0]) { buff.insert(i + 1); }
-		else if (coord[i][0] == mesh.x[mesh.x.size() - 1]) { buff.insert(i + 1); } 
-		else if (coord[i][1] == mesh.y[0]) { buff.insert(i + 1); }
-		else if (coord[i][1] == mesh.y[mesh.y.size() - 1]) { buff.insert(i + 1); }
-		else if (coord[i][2] == mesh.z[0]) { buff.insert(i + 1); }
-		else if (coord[i][2] == mesh.z[mesh.z.size() - 1]) { buff.insert(i + 1); }
-	}
-	l1.insert(l1.begin(), buff.begin(), buff.end());
+  l1.resize(0);
+  set<int> buff;
+  for (int i = 0; i < mesh.kuzlov; i++) {
+    // Р”Р»СЏ С‚РµСЃС‚Р° РЅР° РїРѕР»РёРЅРѕРј Р·Р°РґР°РґРёРј РїРµСЂРІС‹Рµ РєСЂР°РµРІС‹Рµ РЅР° РІСЃРµС… РіСЂР°РЅРёС†Р°С…
+    if (coord[i][0] == mesh.x[0]) {
+      buff.insert(i + 1);
+    } else if (coord[i][0] == mesh.x[mesh.x.size() - 1]) {
+      buff.insert(i + 1);
+    } else if (coord[i][1] == mesh.y[0]) {
+      buff.insert(i + 1);
+    } else if (coord[i][1] == mesh.y[mesh.y.size() - 1]) {
+      buff.insert(i + 1);
+    } else if (coord[i][2] == mesh.z[0]) {
+      buff.insert(i + 1);
+    } else if (coord[i][2] == mesh.z[mesh.z.size() - 1]) {
+      buff.insert(i + 1);
+    }
+  }
+  l1.insert(l1.begin(), buff.begin(), buff.end());
 }
 void STRCTRS::gen_l1_rz_p(class MESH_RZ& mesh, vector<double>& edge_conditions) {
-	l1.resize(0);
-	set<int> buff;
-	/* Для теста на полином зададим первые краевые на всех границах
+  l1.resize(0);
+  set<int> buff;
+  /* Р”Р»СЏ С‚РµСЃС‚Р° РЅР° РїРѕР»РёРЅРѕРј Р·Р°РґР°РґРёРј РїРµСЂРІС‹Рµ РєСЂР°РµРІС‹Рµ РЅР° РІСЃРµС… РіСЂР°РЅРёС†Р°С…
 
-	     S1
-	 ----------
-	 |        |
+       S1
+   ----------
+   |        |
   S1 |        | S1
-	 |        |
-	 ----------
-		 S1
-	 */
-	for (int i = 0; i < mesh.kuzlov; i++) {
-		if (coord[i][0] == mesh.r[mesh.r.size() - 1]) { buff.insert(i + 1); }
-		else if (coord[i][0] == mesh.r[0]) { buff.insert(i + 1); }
-		else if (coord[i][1] == mesh.z[mesh.z.size() - 1]) { buff.insert(i + 1); }
-		else if (coord[i][1] == mesh.z[0]) { buff.insert(i + 1); }
-	}
-	l1.insert(l1.begin(), buff.begin(), buff.end());
+   |        |
+   ----------
+     S1
+   */
+  for (int i = 0; i < mesh.kuzlov; i++) {
+    if (coord[i][0] == mesh.r[mesh.r.size() - 1]) {
+      buff.insert(i + 1);
+    } else if (coord[i][0] == mesh.r[0]) {
+      buff.insert(i + 1);
+    } else if (coord[i][1] == mesh.z[mesh.z.size() - 1]) {
+      buff.insert(i + 1);
+    } else if (coord[i][1] == mesh.z[0]) {
+      buff.insert(i + 1);
+    }
+  }
+  l1.insert(l1.begin(), buff.begin(), buff.end());
 }
 
-
-// nvtr : 8 * int номера вершин прямоугольников
-// nvkat2d : 1 * int номера матреиала прямоугольников
-// coord : 3 * double координаты вершин
-// l1 : 1 * int (номера вершин с первым нулевым краевым условием)
+// nvtr : 8 * int РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// nvkat2d : 1 * int РЅРѕРјРµСЂР° РјР°С‚СЂРµРёР°Р»Р° РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// coord : 3 * double РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ
+// l1 : 1 * int (РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ СЃ РїРµСЂРІС‹Рј РЅСѓР»РµРІС‹Рј РєСЂР°РµРІС‹Рј СѓСЃР»РѕРІРёРµРј)
 void STRCTRS::gen_structures(SREDA& sreda, MESH& mesh) {
-	gen_nvtr(mesh);
-	gen_coord(mesh);
-	gen_nvkat2d(sreda,mesh);
-	gen_nvkat2dr(sreda, mesh);
-	gen_l1(mesh, sreda.edge_conditions);
+  gen_nvtr(mesh);
+  gen_coord(mesh);
+  gen_nvkat2d(sreda, mesh);
+  gen_nvkat2dr(sreda, mesh);
+  gen_l1(mesh, sreda.edge_conditions);
 }
-// nvtr : 4 * int номера вершин прямоугольников
-// nvkat2d : 1 * int номера матреиала прямоугольников
-// coord : 2 * double координаты вершин
-// l1 : 1 * int (номера вершин с первым нулевым краевым условием)
+// nvtr : 4 * int РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// nvkat2d : 1 * int РЅРѕРјРµСЂР° РјР°С‚СЂРµРёР°Р»Р° РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// coord : 2 * double РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ
+// l1 : 1 * int (РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ СЃ РїРµСЂРІС‹Рј РЅСѓР»РµРІС‹Рј РєСЂР°РµРІС‹Рј СѓСЃР»РѕРІРёРµРј)
 void STRCTRS::gen_structures_rz(SREDA& sreda, MESH_RZ& mesh) {
-	gen_nvtr_rz(mesh);
-	gen_coord_rz(mesh);
-	gen_nvkat2d_rz(mesh, sreda);
-	gen_l1_rz(mesh, sreda.edge_conditions);
+  gen_nvtr_rz(mesh);
+  gen_coord_rz(mesh);
+  gen_nvkat2d_rz(mesh, sreda);
+  gen_l1_rz(mesh, sreda.edge_conditions);
 }
 
-// Тест на полиномы
+// РўРµСЃС‚ РЅР° РїРѕР»РёРЅРѕРјС‹
 void STRCTRS::gen_structures_p(SREDA& sreda, MESH& mesh) {
-	gen_nvtr(mesh);
-	gen_coord(mesh);
-	gen_nvkat2d(sreda, mesh);
-	gen_l1_p(mesh, sreda.edge_conditions);
+  gen_nvtr(mesh);
+  gen_coord(mesh);
+  gen_nvkat2d(sreda, mesh);
+  gen_l1_p(mesh, sreda.edge_conditions);
 }
 void STRCTRS::gen_structures_rz_p(SREDA& sreda, MESH_RZ& mesh) {
-	gen_nvtr_rz(mesh);
-	gen_coord_rz(mesh);
-	gen_nvkat2d_rz(mesh, sreda);
-	gen_l1_rz_p(mesh, sreda.edge_conditions);
+  gen_nvtr_rz(mesh);
+  gen_coord_rz(mesh);
+  gen_nvkat2d_rz(mesh, sreda);
+  gen_l1_rz_p(mesh, sreda.edge_conditions);
 }

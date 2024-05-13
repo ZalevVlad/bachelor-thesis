@@ -6,477 +6,495 @@
 #define MESH_H_H0 1e-6
 
 void gen_1d_mesh(vector<double>& sreda_x, vector<double>& hx, vector<double>& kx, vector<int>& left_right, vector<double>& x) {
-	list<double> buff;
-	list<double> buff_inv;
+  list<double> buff;
+  list<double> buff_inv;
 
-	double next;
-	double k, h0;
-	for (int i = 0; i < sreda_x.size() - 1; i++) {
-		buff.resize(0);
-		//Если требуется разрядка от правой границы
-		if (left_right[i]) {
-			//Значение первого шага
-			h0 = hx[i];
-			//Вычислим положение следущего узла
-			next = sreda_x[i + 1] - h0;
-			//Коэффициент разрядки
-			k = kx[i];
-			//Пока мы не перешли за левую границу будем добавлять узлы
-			while (next > sreda_x[i]) {
-				//Добавляем узел
-				buff.push_back(next);
-				//Вычисляем следующий
-				h0 *= k;
-				next -= h0;
-			}
-			//В конец кладем левую границу
-			buff.push_back(sreda_x[i]);
+  double next;
+  double k, h0;
+  for (int i = 0; i < sreda_x.size() - 1; i++) {
+    buff.resize(0);
+    // Р•СЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ СЂР°Р·СЂСЏРґРєР° РѕС‚ РїСЂР°РІРѕР№ РіСЂР°РЅРёС†С‹
+    if (left_right[i]) {
+      // Р—РЅР°С‡РµРЅРёРµ РїРµСЂРІРѕРіРѕ С€Р°РіР°
+      h0 = hx[i];
+      // Р’С‹С‡РёСЃР»РёРј РїРѕР»РѕР¶РµРЅРёРµ СЃР»РµРґСѓС‰РµРіРѕ СѓР·Р»Р°
+      next = sreda_x[i + 1] - h0;
+      // РљРѕСЌС„С„РёС†РёРµРЅС‚ СЂР°Р·СЂСЏРґРєРё
+      k = kx[i];
+      // РџРѕРєР° РјС‹ РЅРµ РїРµСЂРµС€Р»Рё Р·Р° Р»РµРІСѓСЋ РіСЂР°РЅРёС†Сѓ Р±СѓРґРµРј РґРѕР±Р°РІР»СЏС‚СЊ СѓР·Р»С‹
+      while (next > sreda_x[i]) {
+        // Р”РѕР±Р°РІР»СЏРµРј СѓР·РµР»
+        buff.push_back(next);
+        // Р’С‹С‡РёСЃР»СЏРµРј СЃР»РµРґСѓСЋС‰РёР№
+        h0 *= k;
+        next -= h0;
+      }
+      // Р’ РєРѕРЅРµС† РєР»Р°РґРµРј Р»РµРІСѓСЋ РіСЂР°РЅРёС†Сѓ
+      buff.push_back(sreda_x[i]);
 
-			//Обходим buff в обратном порядке и записываем значения в x
-			x.insert(x.end(), buff.rbegin(), buff.rend());
-		}
-		//Если разрядка от левой границы
-		else {
-			//В начало кладем левую границу
-			buff.push_back(sreda_x[i]);
-			//Значение первого шага
-			h0 = hx[i];
-			//Вычислим положение следущего узла
-			next = sreda_x[i] + h0;
-			//Коэффициент разрядки
-			k = kx[i];
-			//Пока мы не перешли за правую границу, будем добавлять узлы
-			while (next < sreda_x[i + 1]) {
-				//Добавляем узел
-				buff.push_back(next);
-				//Вычисляем следующий
-				h0 *= k;
-				next += h0;
-			}
+      // РћР±С…РѕРґРёРј buff РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ Рё Р·Р°РїРёСЃС‹РІР°РµРј Р·РЅР°С‡РµРЅРёСЏ РІ x
+      x.insert(x.end(), buff.rbegin(), buff.rend());
+    }
+    // Р•СЃР»Рё СЂР°Р·СЂСЏРґРєР° РѕС‚ Р»РµРІРѕР№ РіСЂР°РЅРёС†С‹
+    else {
+      // Р’ РЅР°С‡Р°Р»Рѕ РєР»Р°РґРµРј Р»РµРІСѓСЋ РіСЂР°РЅРёС†Сѓ
+      buff.push_back(sreda_x[i]);
+      // Р—РЅР°С‡РµРЅРёРµ РїРµСЂРІРѕРіРѕ С€Р°РіР°
+      h0 = hx[i];
+      // Р’С‹С‡РёСЃР»РёРј РїРѕР»РѕР¶РµРЅРёРµ СЃР»РµРґСѓС‰РµРіРѕ СѓР·Р»Р°
+      next = sreda_x[i] + h0;
+      // РљРѕСЌС„С„РёС†РёРµРЅС‚ СЂР°Р·СЂСЏРґРєРё
+      k = kx[i];
+      // РџРѕРєР° РјС‹ РЅРµ РїРµСЂРµС€Р»Рё Р·Р° РїСЂР°РІСѓСЋ РіСЂР°РЅРёС†Сѓ, Р±СѓРґРµРј РґРѕР±Р°РІР»СЏС‚СЊ СѓР·Р»С‹
+      while (next < sreda_x[i + 1]) {
+        // Р”РѕР±Р°РІР»СЏРµРј СѓР·РµР»
+        buff.push_back(next);
+        // Р’С‹С‡РёСЃР»СЏРµРј СЃР»РµРґСѓСЋС‰РёР№
+        h0 *= k;
+        next += h0;
+      }
 
-			//Обходим buff и записываем значения в x
-			x.insert(x.end(), buff.begin(), buff.end());
-		}
-	}
-	x.push_back(sreda_x[sreda_x.size() - 1]);
-
+      // РћР±С…РѕРґРёРј buff Рё Р·Р°РїРёСЃС‹РІР°РµРј Р·РЅР°С‡РµРЅРёСЏ РІ x
+      x.insert(x.end(), buff.begin(), buff.end());
+    }
+  }
+  x.push_back(sreda_x[sreda_x.size() - 1]);
 }
 
-// Генерация одномерной сетки r для двумерной задачи
+// Р“РµРЅРµСЂР°С†РёСЏ РѕРґРЅРѕРјРµСЂРЅРѕР№ СЃРµС‚РєРё r РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 void gen_1d_mesh_r(class SREDA& sreda, vector<double>& r) {
-	list<double> buff;
-	list<double> buff_inv;
+  list<double> buff;
+  list<double> buff_inv;
 
-	double next;
-	double k = MESH_R_K, h0 = MESH_R_H0,hx,hy;
-	double r0, r1;
-	// Для выбора радуиса на котором будет решаться двумерная задача выберается максимально возможное расстояние до границы от
-	// источника: В случае квадрата его диагональ равна a*sqrt(2)
-	hx = sreda.x[sreda.x.size() - 1] - sreda.x[0];
-	hy = sreda.y[sreda.y.size() - 1] - sreda.y[0];
-	
-	r1 = max(hx, hy) * sqrt(2);
-	buff.resize(0);
-	next = h0;
+  double next;
+  double k = MESH_R_K, h0 = MESH_R_H0, hx, hy;
+  double r0, r1;
+  // Р”Р»СЏ РІС‹Р±РѕСЂР° СЂР°РґСѓРёСЃР° РЅР° РєРѕС‚РѕСЂРѕРј Р±СѓРґРµС‚ СЂРµС€Р°С‚СЊСЃСЏ РґРІСѓРјРµСЂРЅР°СЏ Р·Р°РґР°С‡Р° РІС‹Р±РµСЂР°РµС‚СЃСЏ РјР°РєСЃРёРјР°Р»СЊРЅРѕ РІРѕР·РјРѕР¶РЅРѕРµ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РґРѕ РіСЂР°РЅРёС†С‹ РѕС‚
+  // РёСЃС‚РѕС‡РЅРёРєР°: Р’ СЃР»СѓС‡Р°Рµ РєРІР°РґСЂР°С‚Р° РµРіРѕ РґРёР°РіРѕРЅР°Р»СЊ СЂР°РІРЅР° a*sqrt(2)
+  hx = sreda.x[sreda.x.size() - 1] - sreda.x[0];
+  hy = sreda.y[sreda.y.size() - 1] - sreda.y[0];
 
-	r.push_back(0); //Сперва занесем 0 
-	//Пока мы не перешли за правую границу, будем добавлять узлы
-	while (next < r1) {
-		//Добавляем узел
-		buff.push_back(next);
-		//Вычисляем следующий
-		h0 *= k;
-		next += h0;
-	}
+  r1 = max(hx, hy) * sqrt(2);
+  buff.resize(0);
+  next = h0;
 
-	//Обходим buff и записываем значения в x
-	r.insert(r.end(), buff.begin(), buff.end());
+  r.push_back(0);  // РЎРїРµСЂРІР° Р·Р°РЅРµСЃРµРј 0
+  // РџРѕРєР° РјС‹ РЅРµ РїРµСЂРµС€Р»Рё Р·Р° РїСЂР°РІСѓСЋ РіСЂР°РЅРёС†Сѓ, Р±СѓРґРµРј РґРѕР±Р°РІР»СЏС‚СЊ СѓР·Р»С‹
+  while (next < r1) {
+    // Р”РѕР±Р°РІР»СЏРµРј СѓР·РµР»
+    buff.push_back(next);
+    // Р’С‹С‡РёСЃР»СЏРµРј СЃР»РµРґСѓСЋС‰РёР№
+    h0 *= k;
+    next += h0;
+  }
 
-	// Заносим последний узел
-	r.push_back(r1);
+  // РћР±С…РѕРґРёРј buff Рё Р·Р°РїРёСЃС‹РІР°РµРј Р·РЅР°С‡РµРЅРёСЏ РІ x
+  r.insert(r.end(), buff.begin(), buff.end());
+
+  // Р—Р°РЅРѕСЃРёРј РїРѕСЃР»РµРґРЅРёР№ СѓР·РµР»
+  r.push_back(r1);
 }
 
-// Генерация одномерной сетки h для двумерной задачи
+// Р“РµРЅРµСЂР°С†РёСЏ РѕРґРЅРѕРјРµСЂРЅРѕР№ СЃРµС‚РєРё h РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 void gen_1d_mesh_h(class SREDA& sreda, vector<double>& h) {
-	list<double> buff;
-	list<double> buff_inv;
+  list<double> buff;
+  list<double> buff_inv;
 
-	double next;
-	double k = MESH_H_K, h0 = MESH_H_H0, hx, hy;
-	double h_end;
+  double next;
+  double k = MESH_H_K, h0 = MESH_H_H0, hx, hy;
+  double h_end;
 
-	h_end = sreda.z[sreda.z.size()-1];
-	buff.resize(0);
-	next = h0;
+  h_end = sreda.z[sreda.z.size() - 1];
+  buff.resize(0);
+  next = h0;
 
-	h.push_back(0); //Сперва занесем 0 
-	//Пока мы не перешли за правую границу, будем добавлять узлы
-	while (next < h_end) {
-		//Добавляем узел
-		buff.push_back(next);
-		//Вычисляем следующий
-		h0 *= k;
-		next += h0;
-	}
+  h.push_back(0);  // РЎРїРµСЂРІР° Р·Р°РЅРµСЃРµРј 0
+  // РџРѕРєР° РјС‹ РЅРµ РїРµСЂРµС€Р»Рё Р·Р° РїСЂР°РІСѓСЋ РіСЂР°РЅРёС†Сѓ, Р±СѓРґРµРј РґРѕР±Р°РІР»СЏС‚СЊ СѓР·Р»С‹
+  while (next < h_end) {
+    // Р”РѕР±Р°РІР»СЏРµРј СѓР·РµР»
+    buff.push_back(next);
+    // Р’С‹С‡РёСЃР»СЏРµРј СЃР»РµРґСѓСЋС‰РёР№
+    h0 *= k;
+    next += h0;
+  }
 
-	//Обходим buff и записываем значения в x
-	h.insert(h.end(), buff.begin(), buff.end());
+  // РћР±С…РѕРґРёРј buff Рё Р·Р°РїРёСЃС‹РІР°РµРј Р·РЅР°С‡РµРЅРёСЏ РІ x
+  h.insert(h.end(), buff.begin(), buff.end());
 
-	// Заносим последний узел
-	h.push_back(h_end);
+  // Р—Р°РЅРѕСЃРёРј РїРѕСЃР»РµРґРЅРёР№ СѓР·РµР»
+  h.push_back(h_end);
 }
 
-
-//Подробит сетку
+// РџРѕРґСЂРѕР±РёС‚ СЃРµС‚РєСѓ
 void splitting(vector<double>& x, int k) {
-	if (k) {
-		list<double> buff;
-		double h;
-		for (int i = 0; i < x.size() - 1; i++) {
-			buff.push_back(x[i]);
+  if (k) {
+    list<double> buff;
+    double h;
+    for (int i = 0; i < x.size() - 1; i++) {
+      buff.push_back(x[i]);
 
-			h = (x[i + 1] - x[i]) / pow(2, k);
-			for (int j = 1; j < pow(2, k); j++) {
-				buff.push_back(x[i] + (j * h));
-			}
-		}
-		buff.push_back(x[x.size() - 1]);
+      h = (x[i + 1] - x[i]) / pow(2, k);
+      for (int j = 1; j < pow(2, k); j++) {
+        buff.push_back(x[i] + (j * h));
+      }
+    }
+    buff.push_back(x[x.size() - 1]);
 
-		x.resize(0);
-		x.insert(x.begin(), buff.begin(), buff.end());
-	}
+    x.resize(0);
+    x.insert(x.begin(), buff.begin(), buff.end());
+  }
 }
 
-// Функция для объединения двух отсортированных векторов X[] и Y[]
-std::vector<double> vector_merge(std::vector<double> const& X, std::vector < double > const& Y)
-{
-	int k = 0, i = 0, j = 0;
-	std::vector<double> aux(X.size() + Y.size());
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕР±СЉРµРґРёРЅРµРЅРёСЏ РґРІСѓС… РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹С… РІРµРєС‚РѕСЂРѕРІ X[] Рё Y[]
+std::vector<double> vector_merge(std::vector<double> const& X, std::vector<double> const& Y) {
+  int k = 0, i = 0, j = 0;
+  std::vector<double> aux(X.size() + Y.size());
 
-	// пока есть элементы в первом и втором массивах
-	while (i < X.size() && j < Y.size())
-	{
-		if (X[i] <= Y[j]) {
-			aux[k++] = X[i++];
-		}
-		else {
-			aux[k++] = Y[j++];
-		}
-	}
+  // РїРѕРєР° РµСЃС‚СЊ СЌР»РµРјРµРЅС‚С‹ РІ РїРµСЂРІРѕРј Рё РІС‚РѕСЂРѕРј РјР°СЃСЃРёРІР°С…
+  while (i < X.size() && j < Y.size()) {
+    if (X[i] <= Y[j]) {
+      aux[k++] = X[i++];
+    } else {
+      aux[k++] = Y[j++];
+    }
+  }
 
-	// копируем оставшиеся элементы
-	while (i < X.size()) {
-		aux[k++] = X[i++];
-	}
+  // РєРѕРїРёСЂСѓРµРј РѕСЃС‚Р°РІС€РёРµСЃСЏ СЌР»РµРјРµРЅС‚С‹
+  while (i < X.size()) {
+    aux[k++] = X[i++];
+  }
 
-	while (j < Y.size()) {
-		aux[k++] = Y[j++];
-	}
+  while (j < Y.size()) {
+    aux[k++] = Y[j++];
+  }
 
-	aux.resize(std::distance(aux.begin(), std::unique(aux.begin(), aux.end())));
-	
-	return aux;
+  aux.resize(std::distance(aux.begin(), std::unique(aux.begin(), aux.end())));
+
+  return aux;
 }
 
-// Добавит узлы аномальных элементов в сетку по x
+// Р”РѕР±Р°РІРёС‚ СѓР·Р»С‹ Р°РЅРѕРјР°Р»СЊРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ РІ СЃРµС‚РєСѓ РїРѕ x
 void add_elements_x_edges(class SREDA& sreda, std::vector<double>& x) {
-	std::set<double> buff;
-	for (int i = 0; i < sreda.elms.size(); i++) {
-		if (sreda.elms[i][ANOMAL]) { // Если указано что элемент относится к аномальному полю то включаем его границы
-			if (sreda.x[0] <= sreda.elms[i][X0_COORD] && sreda.elms[i][X0_COORD] <= sreda.x[sreda.x.size() - 1]) {
-				buff.insert(sreda.elms[i][X0_COORD]);
-			}
-			if (sreda.x[0] <= sreda.elms[i][X1_COORD] && sreda.elms[i][X1_COORD] <= sreda.x[sreda.x.size() - 1]) {
-				buff.insert(sreda.elms[i][X1_COORD]);
-			}
-		}
-	}
-	std::vector<double> nodes;
-	nodes.insert(nodes.end(), buff.begin(), buff.end());
+  std::set<double> buff;
+  for (int i = 0; i < sreda.elms.size(); i++) {
+    if (sreda.elms[i][ANOMAL]) {  // Р•СЃР»Рё СѓРєР°Р·Р°РЅРѕ С‡С‚Рѕ СЌР»РµРјРµРЅС‚ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє Р°РЅРѕРјР°Р»СЊРЅРѕРјСѓ РїРѕР»СЋ С‚Рѕ РІРєР»СЋС‡Р°РµРј РµРіРѕ РіСЂР°РЅРёС†С‹
+      if (sreda.x[0] <= sreda.elms[i][X0_COORD] && sreda.elms[i][X0_COORD] <= sreda.x[sreda.x.size() - 1]) {
+        buff.insert(sreda.elms[i][X0_COORD]);
+      }
+      if (sreda.x[0] <= sreda.elms[i][X1_COORD] && sreda.elms[i][X1_COORD] <= sreda.x[sreda.x.size() - 1]) {
+        buff.insert(sreda.elms[i][X1_COORD]);
+      }
+    }
+  }
+  std::vector<double> nodes;
+  nodes.insert(nodes.end(), buff.begin(), buff.end());
 
-	// Добавим в сетку новые узлы и удалим повторяющиеся
-	x = vector_merge(x, nodes);
-	x.resize(std::distance(x.begin(), std::unique(x.begin(), x.end())));
+  // Р”РѕР±Р°РІРёРј РІ СЃРµС‚РєСѓ РЅРѕРІС‹Рµ СѓР·Р»С‹ Рё СѓРґР°Р»РёРј РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ
+  x = vector_merge(x, nodes);
+  x.resize(std::distance(x.begin(), std::unique(x.begin(), x.end())));
 }
 
-// Добавит узлы аномальных элементов в сетку по y
+// Р”РѕР±Р°РІРёС‚ СѓР·Р»С‹ Р°РЅРѕРјР°Р»СЊРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ РІ СЃРµС‚РєСѓ РїРѕ y
 void add_elements_y_edges(class SREDA& sreda, std::vector<double>& y) {
-	std::set<double> buff;
-	for (int i = 0; i < sreda.elms.size(); i++) {
-		if (sreda.elms[i][ANOMAL]) { // Если указано что элемент относится к аномальному полю то включаем его границы
-			if (sreda.y[0] <= sreda.elms[i][Y0_COORD] && sreda.elms[i][Y0_COORD] <= sreda.y[sreda.y.size() - 1]) {
-				buff.insert(sreda.elms[i][Y0_COORD]);
-			}
-			if (sreda.y[0] <= sreda.elms[i][Y1_COORD] && sreda.elms[i][Y1_COORD] <= sreda.y[sreda.y.size() - 1]) {
-				buff.insert(sreda.elms[i][Y1_COORD]);
-			}
-		}
-	}
-	std::vector<double> nodes;
-	nodes.insert(nodes.end(), buff.begin(), buff.end());
+  std::set<double> buff;
+  for (int i = 0; i < sreda.elms.size(); i++) {
+    if (sreda.elms[i][ANOMAL]) {  // Р•СЃР»Рё СѓРєР°Р·Р°РЅРѕ С‡С‚Рѕ СЌР»РµРјРµРЅС‚ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє Р°РЅРѕРјР°Р»СЊРЅРѕРјСѓ РїРѕР»СЋ С‚Рѕ РІРєР»СЋС‡Р°РµРј РµРіРѕ РіСЂР°РЅРёС†С‹
+      if (sreda.y[0] <= sreda.elms[i][Y0_COORD] && sreda.elms[i][Y0_COORD] <= sreda.y[sreda.y.size() - 1]) {
+        buff.insert(sreda.elms[i][Y0_COORD]);
+      }
+      if (sreda.y[0] <= sreda.elms[i][Y1_COORD] && sreda.elms[i][Y1_COORD] <= sreda.y[sreda.y.size() - 1]) {
+        buff.insert(sreda.elms[i][Y1_COORD]);
+      }
+    }
+  }
+  std::vector<double> nodes;
+  nodes.insert(nodes.end(), buff.begin(), buff.end());
 
-	// Добавим в сетку новые узлы и удалим повторяющиеся
-	y = vector_merge(y, nodes);
-	y.resize(std::distance(y.begin(), std::unique(y.begin(), y.end())));
+  // Р”РѕР±Р°РІРёРј РІ СЃРµС‚РєСѓ РЅРѕРІС‹Рµ СѓР·Р»С‹ Рё СѓРґР°Р»РёРј РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ
+  y = vector_merge(y, nodes);
+  y.resize(std::distance(y.begin(), std::unique(y.begin(), y.end())));
 }
 
-// Добавит узлы аномальных элементов в сетку по z
+// Р”РѕР±Р°РІРёС‚ СѓР·Р»С‹ Р°РЅРѕРјР°Р»СЊРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ РІ СЃРµС‚РєСѓ РїРѕ z
 void add_elements_z_edges(class SREDA& sreda, std::vector<double>& z) {
-	std::set<double> buff;
-	for (int i = 0; i < sreda.elms.size(); i++) {
-		if (sreda.elms[i][ANOMAL]) { // Если указано что элемент относится к аномальному полю то включаем его границы
-			if (sreda.z[0] <= sreda.elms[i][Z0_COORD] && sreda.elms[i][Z0_COORD] <= sreda.z[sreda.z.size() - 1]) {
-				buff.insert(sreda.elms[i][Z0_COORD]);
-			}
-			if (sreda.z[0] <= sreda.elms[i][Z1_COORD] && sreda.elms[i][Z1_COORD] <= sreda.z[sreda.z.size() - 1]) {
-				buff.insert(sreda.elms[i][Z1_COORD]);
-			}
-		}
-	}
-	std::vector<double> nodes;
-	nodes.insert(nodes.end(), buff.begin(), buff.end());
+  std::set<double> buff;
+  for (int i = 0; i < sreda.elms.size(); i++) {
+    if (sreda.elms[i][ANOMAL]) {  // Р•СЃР»Рё СѓРєР°Р·Р°РЅРѕ С‡С‚Рѕ СЌР»РµРјРµРЅС‚ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє Р°РЅРѕРјР°Р»СЊРЅРѕРјСѓ РїРѕР»СЋ С‚Рѕ РІРєР»СЋС‡Р°РµРј РµРіРѕ РіСЂР°РЅРёС†С‹
+      if (sreda.z[0] <= sreda.elms[i][Z0_COORD] && sreda.elms[i][Z0_COORD] <= sreda.z[sreda.z.size() - 1]) {
+        buff.insert(sreda.elms[i][Z0_COORD]);
+      }
+      if (sreda.z[0] <= sreda.elms[i][Z1_COORD] && sreda.elms[i][Z1_COORD] <= sreda.z[sreda.z.size() - 1]) {
+        buff.insert(sreda.elms[i][Z1_COORD]);
+      }
+    }
+  }
+  std::vector<double> nodes;
+  nodes.insert(nodes.end(), buff.begin(), buff.end());
 
-	// Добавим в сетку новые узлы и удалим повторяющиеся
-	z = vector_merge(z, nodes);
+  // Р”РѕР±Р°РІРёРј РІ СЃРµС‚РєСѓ РЅРѕРІС‹Рµ СѓР·Р»С‹ Рё СѓРґР°Р»РёРј РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ
+  z = vector_merge(z, nodes);
 }
 
+void MESH::gen_mesh(class SREDA& sreda) {
+  // Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ x
+  gen_1d_mesh(sreda.x, sreda.hx, sreda.kx, sreda.left_right[0], x);
+  splitting(x, sreda.splitting[0]);
+  add_elements_x_edges(sreda, x);
 
-void  MESH::gen_mesh(class SREDA& sreda) {
-	//Генерация сетки по x
-	gen_1d_mesh(sreda.x, sreda.hx, sreda.kx, sreda.left_right[0], x);
-	splitting(x, sreda.splitting[0]);
-	add_elements_x_edges(sreda, x);
+  // Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ y
+  gen_1d_mesh(sreda.y, sreda.hy, sreda.ky, sreda.left_right[1], y);
+  splitting(y, sreda.splitting[1]);
+  add_elements_y_edges(sreda, y);
 
-	//Генерация сетки по y
-	gen_1d_mesh(sreda.y, sreda.hy, sreda.ky, sreda.left_right[1], y);
-	splitting(y, sreda.splitting[1]);
-	add_elements_y_edges(sreda, y);
+  // Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ z
+  gen_1d_mesh(sreda.z, sreda.hz, sreda.kz, sreda.left_right[2], z);
+  splitting(z, sreda.splitting[2]);
+  add_elements_z_edges(sreda, z);
 
-	//Генерация сетки по z	
-	gen_1d_mesh(sreda.z, sreda.hz, sreda.kz, sreda.left_right[2], z);
-	splitting(z, sreda.splitting[2]);
-	add_elements_z_edges(sreda, z);
+  kuzlov = x.size() * y.size() * z.size();
+  kel = (x.size() - 1) * (y.size() - 1) * (z.size() - 1);
 
-	kuzlov = x.size() * y.size() * z.size();
-	kel = (x.size() - 1) * (y.size() - 1) * (z.size() - 1);
-
-	printf("3D: kuzlov - %d ; kel - %d; x - %d ; y - %d, z - %d\n",
-		kuzlov, kel,x.size(),y.size(),z.size());
+  printf("3D: kuzlov - %d ; kel - %d; x - %d ; y - %d, z - %d\n",
+         kuzlov, kel, x.size(), y.size(), z.size());
 }
 
-// Генерация двумерной сетки
-void  MESH::gen_mesh_rh(class SREDA& sreda) {
-	//Генерация сетки по r
-	gen_1d_mesh_r(sreda, r);
+// Р“РµРЅРµСЂР°С†РёСЏ РґРІСѓРјРµСЂРЅРѕР№ СЃРµС‚РєРё
+void MESH::gen_mesh_rh(class SREDA& sreda) {
+  // Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ r
+  gen_1d_mesh_r(sreda, r);
 
-	//Генерация сетки по h
-	gen_1d_mesh_h(sreda, h);
+  // Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ h
+  gen_1d_mesh_h(sreda, h);
 
-	kuzlov = r.size() * h.size();
-	kel = (r.size() - 1) * (h.size() - 1);
+  kuzlov = r.size() * h.size();
+  kel = (r.size() - 1) * (h.size() - 1);
 
-	printf("2D: kuzlov - %d ; kel - %d; r - %d, z - %d\n", kuzlov, kel, r.size(), h.size());
+  printf("2D: kuzlov - %d ; kel - %d; r - %d, z - %d\n", kuzlov, kel, r.size(), h.size());
 }
 
-// Генерирует номера узлов элементов для трехмерной сетки
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° СѓР·Р»РѕРІ СЌР»РµРјРµРЅС‚РѕРІ РґР»СЏ С‚СЂРµС…РјРµСЂРЅРѕР№ СЃРµС‚РєРё
 void gen_nvtr(class MESH* mesh,
-	vector<vector<int>>& nvtr)
-{
-	double kel = mesh->kel;
-	nvtr.resize(mesh->kel);
-	for (int i = 0; i < kel; i++) { nvtr[i].resize(8); }
+              vector<vector<int>>& nvtr) {
+  double kel = mesh->kel;
+  nvtr.resize(mesh->kel);
+  for (int i = 0; i < kel; i++) {
+    nvtr[i].resize(8);
+  }
 
-	int x, y, z;
-	// Количество элементов в слое x
-	int kx = (mesh->x.size() - 1);
-	// Количество элементов в слое xy
-	int kxy = (mesh->x.size() - 1) * (mesh->y.size() - 1);
-	for (int i = 0; i < kel; i++) {
-		x = i % kx + 1;
-		y = (i % kxy) / (kx)+1;
-		z = i / kxy + 1;
+  int x, y, z;
+  // РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РІ СЃР»РѕРµ x
+  int kx = (mesh->x.size() - 1);
+  // РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РІ СЃР»РѕРµ xy
+  int kxy = (mesh->x.size() - 1) * (mesh->y.size() - 1);
+  for (int i = 0; i < kel; i++) {
+    x = i % kx + 1;
+    y = (i % kxy) / (kx) + 1;
+    z = i / kxy + 1;
 
-		nvtr[i][0] = x + (y - 1) * (kx + 1) + (z - 1) * mesh->x.size() * mesh->y.size();
-		nvtr[i][1] = nvtr[i][0] + 1;
-		nvtr[i][2] = nvtr[i][0] + mesh->x.size();
-		nvtr[i][3] = nvtr[i][2] + 1;
-		nvtr[i][4] = nvtr[i][0] + mesh->x.size() * mesh->y.size();
-		nvtr[i][5] = nvtr[i][4] + 1;
-		nvtr[i][6] = nvtr[i][4] + mesh->x.size();
-		nvtr[i][7] = nvtr[i][6] + 1;
-	}
+    nvtr[i][0] = x + (y - 1) * (kx + 1) + (z - 1) * mesh->x.size() * mesh->y.size();
+    nvtr[i][1] = nvtr[i][0] + 1;
+    nvtr[i][2] = nvtr[i][0] + mesh->x.size();
+    nvtr[i][3] = nvtr[i][2] + 1;
+    nvtr[i][4] = nvtr[i][0] + mesh->x.size() * mesh->y.size();
+    nvtr[i][5] = nvtr[i][4] + 1;
+    nvtr[i][6] = nvtr[i][4] + mesh->x.size();
+    nvtr[i][7] = nvtr[i][6] + 1;
+  }
 }
 
-// Генерирует номера узлов элементов для двумерной сетки
+// Р“РµРЅРµСЂРёСЂСѓРµС‚ РЅРѕРјРµСЂР° СѓР·Р»РѕРІ СЌР»РµРјРµРЅС‚РѕРІ РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ СЃРµС‚РєРё
 void gen_nvtr_rh(class MESH* mesh,
-	vector<vector<int>>& nvtr)
-{
-	double kel = mesh->kel;
-	nvtr.resize(mesh->kel);
-	for (int i = 0; i < kel; i++) { nvtr[i].resize(4); }
+                 vector<vector<int>>& nvtr) {
+  double kel = mesh->kel;
+  nvtr.resize(mesh->kel);
+  for (int i = 0; i < kel; i++) {
+    nvtr[i].resize(4);
+  }
 
-	int n;
-	for (int i = 0; i < kel; i++) {
-		n = i / (mesh->r.size()-1)*(mesh->r.size()) + i%(mesh->r.size()-1) + 1;
+  int n;
+  for (int i = 0; i < kel; i++) {
+    n = i / (mesh->r.size() - 1) * (mesh->r.size()) + i % (mesh->r.size() - 1) + 1;
 
-		nvtr[i][0] = n;
-		nvtr[i][1] = n + 1;
-		nvtr[i][2] = n + mesh->r.size();
-		nvtr[i][3] = n + mesh->r.size() + 1;
-
-	}
+    nvtr[i][0] = n;
+    nvtr[i][1] = n + 1;
+    nvtr[i][2] = n + mesh->r.size();
+    nvtr[i][3] = n + mesh->r.size() + 1;
+  }
 }
-
 
 void gen_coord(class MESH* mesh,
-	vector<vector<double>>& rz) {
-	rz.resize(mesh->kuzlov);
-	int xs = mesh->x.size();
-	int ys = mesh->y.size();
-	int zs = mesh->z.size();
-	int x, y, z;
-	for (int i = 0; i < mesh->kuzlov; i++) {
-		x = i % xs;
-		y = (i % (xs * ys)) / xs;
-		z = i / (xs * ys);
-		rz[i].resize(3);
-		rz[i] = { mesh->x[x], mesh->y[y], mesh->z[z] };
-	}
-
+               vector<vector<double>>& rz) {
+  rz.resize(mesh->kuzlov);
+  int xs = mesh->x.size();
+  int ys = mesh->y.size();
+  int zs = mesh->z.size();
+  int x, y, z;
+  for (int i = 0; i < mesh->kuzlov; i++) {
+    x = i % xs;
+    y = (i % (xs * ys)) / xs;
+    z = i / (xs * ys);
+    rz[i].resize(3);
+    rz[i] = {mesh->x[x], mesh->y[y], mesh->z[z]};
+  }
 }
 
 void gen_coord_rh(class MESH* mesh,
-	vector<vector<double>>& coord) {
-	coord.resize(mesh->kuzlov);
-	int rs = mesh->r.size();
-	int hs = mesh->h.size();
-	int r, h;
-	for (int i = 0; i < mesh->kuzlov; i++) {
-		r = i % rs;
-		h = i / rs;
-		coord[i].resize(2);
-		coord[i] = { mesh->r[r], mesh->h[h]};
-	}
-
+                  vector<vector<double>>& coord) {
+  coord.resize(mesh->kuzlov);
+  int rs = mesh->r.size();
+  int hs = mesh->h.size();
+  int r, h;
+  for (int i = 0; i < mesh->kuzlov; i++) {
+    r = i % rs;
+    h = i / rs;
+    coord[i].resize(2);
+    coord[i] = {mesh->r[r], mesh->h[h]};
+  }
 }
 
-// По кооринатам определит номера материала
-// Обход обратный: будет получен материал аномального поля, если он не существует, то нормального
+// РџРѕ РєРѕРѕСЂРёРЅР°С‚Р°Рј РѕРїСЂРµРґРµР»РёС‚ РЅРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»Р°
+// РћР±С…РѕРґ РѕР±СЂР°С‚РЅС‹Р№: Р±СѓРґРµС‚ РїРѕР»СѓС‡РµРЅ РјР°С‚РµСЂРёР°Р» Р°РЅРѕРјР°Р»СЊРЅРѕРіРѕ РїРѕР»СЏ, РµСЃР»Рё РѕРЅ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, С‚Рѕ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ
 int get_mat_from_sreda_reverse(class SREDA& sreda, double x, double y, double z) {
-	// Будем обходить подобласти в обратном порядке (учитывая что в файле среда подоблости заданны вложением по порядку)
-	for (int i = sreda.elms.size() - 1; i >= 0; i--) {
-		/*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
-		if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
-			sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
-			sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
-			return sreda.elms[i][MAT_N];
-		}
-	}
-	return 0;
+  // Р‘СѓРґРµРј РѕР±С…РѕРґРёС‚СЊ РїРѕРґРѕР±Р»Р°СЃС‚Рё РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ (СѓС‡РёС‚С‹РІР°СЏ С‡С‚Рѕ РІ С„Р°Р№Р»Рµ СЃСЂРµРґР° РїРѕРґРѕР±Р»РѕСЃС‚Рё Р·Р°РґР°РЅРЅС‹ РІР»РѕР¶РµРЅРёРµРј РїРѕ РїРѕСЂСЏРґРєСѓ)
+  for (int i = sreda.elms.size() - 1; i >= 0; i--) {
+    /*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
+    if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
+        sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
+        sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
+      return sreda.elms[i][MAT_N];
+    }
+  }
+  return 0;
 }
 
-// По кооринатам определит номера материала
-// Обход прямой: в первую очередь будет получен материал нормального поля
+// РџРѕ РєРѕРѕСЂРёРЅР°С‚Р°Рј РѕРїСЂРµРґРµР»РёС‚ РЅРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»Р°
+// РћР±С…РѕРґ РїСЂСЏРјРѕР№: РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ Р±СѓРґРµС‚ РїРѕР»СѓС‡РµРЅ РјР°С‚РµСЂРёР°Р» РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ РїРѕР»СЏ
 int get_mat_from_sreda_direct(class SREDA& sreda, double x, double y, double z) {
-	// Будем обходить подобласти в обратном порядке (учитывая что в файле среда подоблости заданны вложением по порядку)
-	for (int i = sreda.elms.size() - 1; i >= 0; i--) {
-		/*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
-		printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
-		if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
-			sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
-			sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
-			return sreda.elms[i][MAT_N];
-		}
-	}
-	return 0;
+  // Р‘СѓРґРµРј РѕР±С…РѕРґРёС‚СЊ РїРѕРґРѕР±Р»Р°СЃС‚Рё РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ (СѓС‡РёС‚С‹РІР°СЏ С‡С‚Рѕ РІ С„Р°Р№Р»Рµ СЃСЂРµРґР° РїРѕРґРѕР±Р»РѕСЃС‚Рё Р·Р°РґР°РЅРЅС‹ РІР»РѕР¶РµРЅРёРµРј РїРѕ РїРѕСЂСЏРґРєСѓ)
+  for (int i = sreda.elms.size() - 1; i >= 0; i--) {
+    /*printf("%lf %lf %lf\n", sreda.elms[i][X0_COORD], x, sreda.elms[i][X1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Y0_COORD], y, sreda.elms[i][Y1_COORD]);
+    printf("%lf %lf %lf\n", sreda.elms[i][Z0_COORD], z, sreda.elms[i][Z1_COORD]);*/
+    if (sreda.elms[i][X0_COORD] < x && x < sreda.elms[i][X1_COORD] &&
+        sreda.elms[i][Y0_COORD] < y && y < sreda.elms[i][Y1_COORD] &&
+        sreda.elms[i][Z0_COORD] < z && z < sreda.elms[i][Z1_COORD]) {
+      return sreda.elms[i][MAT_N];
+    }
+  }
+  return 0;
 }
 
-// По кооринатам определит номера материала для двумерной задачи
+// РџРѕ РєРѕРѕСЂРёРЅР°С‚Р°Рј РѕРїСЂРµРґРµР»РёС‚ РЅРѕРјРµСЂР° РјР°С‚РµСЂРёР°Р»Р° РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё
 int get_mat_from_sreda_rz(class SREDA& sreda, double r, double h) {
-	// Будем обходить подобласти в прямом порядке (учитывая что в файле среда подоблости заданны вложением по порядку)
-	// Считается, что для двумерной задачи элементы, которые не располагаются от начала до конца границы являются аномальными
-	for (int i = sreda.elms.size() - 1; i >= 0; i--) {
-		if (sreda.elms[i][Z0_COORD] < h && h < sreda.elms[i][Z1_COORD]) {
-			return sreda.elms[i][MAT_N];
-		}
-	}
-	return 0;
+  // Р‘СѓРґРµРј РѕР±С…РѕРґРёС‚СЊ РїРѕРґРѕР±Р»Р°СЃС‚Рё РІ РїСЂСЏРјРѕРј РїРѕСЂСЏРґРєРµ (СѓС‡РёС‚С‹РІР°СЏ С‡С‚Рѕ РІ С„Р°Р№Р»Рµ СЃСЂРµРґР° РїРѕРґРѕР±Р»РѕСЃС‚Рё Р·Р°РґР°РЅРЅС‹ РІР»РѕР¶РµРЅРёРµРј РїРѕ РїРѕСЂСЏРґРєСѓ)
+  // РЎС‡РёС‚Р°РµС‚СЃСЏ, С‡С‚Рѕ РґР»СЏ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рё СЌР»РµРјРµРЅС‚С‹, РєРѕС‚РѕСЂС‹Рµ РЅРµ СЂР°СЃРїРѕР»Р°РіР°СЋС‚СЃСЏ РѕС‚ РЅР°С‡Р°Р»Р° РґРѕ РєРѕРЅС†Р° РіСЂР°РЅРёС†С‹ СЏРІР»СЏСЋС‚СЃСЏ Р°РЅРѕРјР°Р»СЊРЅС‹РјРё
+  for (int i = sreda.elms.size() - 1; i >= 0; i--) {
+    if (sreda.elms[i][Z0_COORD] < h && h < sreda.elms[i][Z1_COORD]) {
+      return sreda.elms[i][MAT_N];
+    }
+  }
+  return 0;
 }
 
 void gen_nvkat2d(class SREDA& sreda, class MESH* mesh, vector<int>& nvkat2d, vector<vector<int>>& nvtr,
-	vector<vector<double>>& rz) {
-	nvkat2d.resize(mesh->kel);
-	double x, y, z;
-	for (int i = 0; i < mesh->kel; i++) {
-		// Координаты центров элементов
-		x = (rz[nvtr[i][0] - 1][0] + rz[nvtr[i][1] - 1][0]) / 2.;
-		y = (rz[nvtr[i][0] - 1][1] + rz[nvtr[i][2] - 1][1]) / 2.;
-		z = (rz[nvtr[i][0] - 1][2] + rz[nvtr[i][4] - 1][2]) / 2.;
-		nvkat2d[i] = get_mat_from_sreda_reverse(sreda, x, y, z);
-	}
+                 vector<vector<double>>& rz) {
+  nvkat2d.resize(mesh->kel);
+  double x, y, z;
+  for (int i = 0; i < mesh->kel; i++) {
+    // РљРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂРѕРІ СЌР»РµРјРµРЅС‚РѕРІ
+    x = (rz[nvtr[i][0] - 1][0] + rz[nvtr[i][1] - 1][0]) / 2.;
+    y = (rz[nvtr[i][0] - 1][1] + rz[nvtr[i][2] - 1][1]) / 2.;
+    z = (rz[nvtr[i][0] - 1][2] + rz[nvtr[i][4] - 1][2]) / 2.;
+    nvkat2d[i] = get_mat_from_sreda_reverse(sreda, x, y, z);
+  }
 }
 
 void gen_nvkat2d_rh(class SREDA& sreda, class MESH* mesh, vector<int>& nvkat2d, vector<vector<int>>& nvtr,
-	vector<vector<double>>& rz) {
-	nvkat2d.resize(mesh->kel);
-	double r, z;
-	for (int i = 0; i < mesh->kel; i++) {
-		// Координаты центров элементов
-		r = (rz[nvtr[i][0] - 1][0] + rz[nvtr[i][1] - 1][0]) / 2.;
-		z = (rz[nvtr[i][0] - 1][1] + rz[nvtr[i][2] - 1][1]) / 2.;
-		nvkat2d[i] = get_mat_from_sreda_rz(sreda, r, z);
-	}
+                    vector<vector<double>>& rz) {
+  nvkat2d.resize(mesh->kel);
+  double r, z;
+  for (int i = 0; i < mesh->kel; i++) {
+    // РљРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂРѕРІ СЌР»РµРјРµРЅС‚РѕРІ
+    r = (rz[nvtr[i][0] - 1][0] + rz[nvtr[i][1] - 1][0]) / 2.;
+    z = (rz[nvtr[i][0] - 1][1] + rz[nvtr[i][2] - 1][1]) / 2.;
+    nvkat2d[i] = get_mat_from_sreda_rz(sreda, r, z);
+  }
 }
 
 void gen_l1(class MESH* mesh, vector<double>& edge_conditions, vector<int>& l1, vector<vector<double>>& rz) {
-	l1.resize(0);
-	set<int> buff;
-	for (int i = 0; i < mesh->kuzlov; i++) {
-		// Если указано, что на грани x = x0 заданы первые краевые,
-		// то если координата текущей точки совпадает с x0, тогда добавить ее номер.
-		// С остальными гранями аналогично
-		if (edge_conditions[L1_X0]) { if (rz[i][0] == mesh->x[0]) { buff.insert(i + 1); } }
-		if (edge_conditions[L1_X1]) { if (rz[i][0] == mesh->x[mesh->x.size() - 1]) { buff.insert(i + 1); } }
+  l1.resize(0);
+  set<int> buff;
+  for (int i = 0; i < mesh->kuzlov; i++) {
+    // Р•СЃР»Рё СѓРєР°Р·Р°РЅРѕ, С‡С‚Рѕ РЅР° РіСЂР°РЅРё x = x0 Р·Р°РґР°РЅС‹ РїРµСЂРІС‹Рµ РєСЂР°РµРІС‹Рµ,
+    // С‚Рѕ РµСЃР»Рё РєРѕРѕСЂРґРёРЅР°С‚Р° С‚РµРєСѓС‰РµР№ С‚РѕС‡РєРё СЃРѕРІРїР°РґР°РµС‚ СЃ x0, С‚РѕРіРґР° РґРѕР±Р°РІРёС‚СЊ РµРµ РЅРѕРјРµСЂ.
+    // РЎ РѕСЃС‚Р°Р»СЊРЅС‹РјРё РіСЂР°РЅСЏРјРё Р°РЅР°Р»РѕРіРёС‡РЅРѕ
+    if (edge_conditions[L1_X0]) {
+      if (rz[i][0] == mesh->x[0]) {
+        buff.insert(i + 1);
+      }
+    }
+    if (edge_conditions[L1_X1]) {
+      if (rz[i][0] == mesh->x[mesh->x.size() - 1]) {
+        buff.insert(i + 1);
+      }
+    }
 
-		if (edge_conditions[L1_Y0]) { if (rz[i][1] == mesh->y[0]) { buff.insert(i + 1); } }
-		if (edge_conditions[L1_Y1]) { if (rz[i][1] == mesh->y[mesh->y.size() - 1]) { buff.insert(i + 1); } }
+    if (edge_conditions[L1_Y0]) {
+      if (rz[i][1] == mesh->y[0]) {
+        buff.insert(i + 1);
+      }
+    }
+    if (edge_conditions[L1_Y1]) {
+      if (rz[i][1] == mesh->y[mesh->y.size() - 1]) {
+        buff.insert(i + 1);
+      }
+    }
 
-		if (edge_conditions[L1_Z0]) { if (rz[i][2] == mesh->z[0]) { buff.insert(i + 1); } }
-		if (edge_conditions[L1_Z1]) { if (rz[i][2] == mesh->z[mesh->z.size() - 1]) { buff.insert(i + 1); } }
-	}
-	l1.insert(l1.begin(), buff.begin(), buff.end());
+    if (edge_conditions[L1_Z0]) {
+      if (rz[i][2] == mesh->z[0]) {
+        buff.insert(i + 1);
+      }
+    }
+    if (edge_conditions[L1_Z1]) {
+      if (rz[i][2] == mesh->z[mesh->z.size() - 1]) {
+        buff.insert(i + 1);
+      }
+    }
+  }
+  l1.insert(l1.begin(), buff.begin(), buff.end());
 }
 
 void gen_l1_rh(class MESH* mesh, vector<double>& edge_conditions, vector<int>& l1, vector<vector<double>>& coord) {
-	l1.resize(0);
-	set<int> buff;
-	/* Краевые условия в двумерной задаче заданы следующим образом
-	   
-	   S2=0
-	 ----------
-	 |        |
+  l1.resize(0);
+  set<int> buff;
+  /* РљСЂР°РµРІС‹Рµ СѓСЃР»РѕРІРёСЏ РІ РґРІСѓРјРµСЂРЅРѕР№ Р·Р°РґР°С‡Рµ Р·Р°РґР°РЅС‹ СЃР»РµРґСѓСЋС‰РёРј РѕР±СЂР°Р·РѕРј
+
+     S2=0
+   ----------
+   |        |
 s2=0 |        | S1 = 0
-	 |        |
-	 ----------
-	    S1 = 0
-	 */
-	for (int i = 0; i < mesh->kuzlov; i++) {
-		if (coord[i][0] == mesh->r[mesh->r.size()-1]) { buff.insert(i + 1); }
-		else if (coord[i][1] == mesh->h[mesh->h.size()-1]) { buff.insert(i + 1); }
-	}
-	l1.insert(l1.begin(), buff.begin(), buff.end());
+   |        |
+   ----------
+      S1 = 0
+   */
+  for (int i = 0; i < mesh->kuzlov; i++) {
+    if (coord[i][0] == mesh->r[mesh->r.size() - 1]) {
+      buff.insert(i + 1);
+    } else if (coord[i][1] == mesh->h[mesh->h.size() - 1]) {
+      buff.insert(i + 1);
+    }
+  }
+  l1.insert(l1.begin(), buff.begin(), buff.end());
 }
 
-
-// nvtr : 4 * int номера вершин прямоугольников
-// nvkat2d : 1 * int номера матреиала прямоугольников
-// coord : 3 * double (r, z) координаты вершин
-// l1 : 1 * int (номера вершин с первым нулевым краевым условием)
-// sigma : 1 * double значение параметра сигма по номеру материала
-//void MESH::gen_structures(class FEM& fem, class SREDA& sreda)
+// nvtr : 4 * int РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// nvkat2d : 1 * int РЅРѕРјРµСЂР° РјР°С‚СЂРµРёР°Р»Р° РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// coord : 3 * double (r, z) РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ
+// l1 : 1 * int (РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ СЃ РїРµСЂРІС‹Рј РЅСѓР»РµРІС‹Рј РєСЂР°РµРІС‹Рј СѓСЃР»РѕРІРёРµРј)
+// sigma : 1 * double Р·РЅР°С‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° СЃРёРіРјР° РїРѕ РЅРѕРјРµСЂСѓ РјР°С‚РµСЂРёР°Р»Р°
+// void MESH::gen_structures(class FEM& fem, class SREDA& sreda)
 //{
 //	gen_nvtr(this, fem.nvtr);
 //	gen_coord(this, fem.coord);
@@ -484,65 +502,62 @@ s2=0 |        | S1 = 0
 //	gen_l1(this, sreda.edge_conditions, fem.l1, fem.coord);
 //}
 
-// nvtr : 8 * int номера вершин прямоугольников
-// nvkat2d : int nvkat2d номера матреиала прямоугольников
-// rz : 3 * double (x, y, z) координаты вершин
-// l1 : 1 * int (номера вершин с первым нулевым краевым условием)
-// sigma : 1 * double значение параметра сигма по номеру материала
-//void MESH::gen_structures_rh(class FEM& fem, class SREDA& sreda)
+// nvtr : 8 * int РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// nvkat2d : int nvkat2d РЅРѕРјРµСЂР° РјР°С‚СЂРµРёР°Р»Р° РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
+// rz : 3 * double (x, y, z) РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ
+// l1 : 1 * int (РЅРѕРјРµСЂР° РІРµСЂС€РёРЅ СЃ РїРµСЂРІС‹Рј РЅСѓР»РµРІС‹Рј РєСЂР°РµРІС‹Рј СѓСЃР»РѕРІРёРµРј)
+// sigma : 1 * double Р·РЅР°С‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° СЃРёРіРјР° РїРѕ РЅРѕРјРµСЂСѓ РјР°С‚РµСЂРёР°Р»Р°
+// void MESH::gen_structures_rh(class FEM& fem, class SREDA& sreda)
 //{
 //	gen_nvtr_rh(this, fem.nvtr);
 //	gen_coord_rh(this, fem.coord);
 //	gen_nvkat2d_rh(sreda, this, fem.nvkat2d, fem.nvtr, fem.coord);
-//	fem.nvtr_rh = fem.nvtr; // Сохраним структуру для дальнейшего пользования
+//	fem.nvtr_rh = fem.nvtr; // РЎРѕС…СЂР°РЅРёРј СЃС‚СЂСѓРєС‚СѓСЂСѓ РґР»СЏ РґР°Р»СЊРЅРµР№С€РµРіРѕ РїРѕР»СЊР·РѕРІР°РЅРёСЏ
 //	gen_l1_rh(this, sreda.edge_conditions, fem.l1, fem.coord);
 //}
 
-// Генерация двумерной сетки
-void  MESH_RZ::gen_mesh(class SREDA_RZ & sreda_rz, class SREDA & sreda) {
-	////Генерация сетки по r
-	//gen_1d_mesh_r(sreda, r);
+// Р“РµРЅРµСЂР°С†РёСЏ РґРІСѓРјРµСЂРЅРѕР№ СЃРµС‚РєРё
+void MESH_RZ::gen_mesh(class SREDA_RZ& sreda_rz, class SREDA& sreda) {
+  ////Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ r
+  // gen_1d_mesh_r(sreda, r);
 
-	////Генерация сетки по h
-	//gen_1d_mesh_h(sreda, z);
+  ////Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ h
+  // gen_1d_mesh_h(sreda, z);
 
-	//kuzlov = r.size() * z.size();
-	//kel = (r.size() - 1) * (z.size() - 1);
+  // kuzlov = r.size() * z.size();
+  // kel = (r.size() - 1) * (z.size() - 1);
 
-	vector<double> hx = { sreda_rz.r[H0] };
-	vector<double> kx = { sreda_rz.r[K] };
-	vector<int> left_right = { 0 };
-	vector < double> x = { 0,sreda_rz.r[END] };
+  vector<double> hx = {sreda_rz.r[H0]};
+  vector<double> kx = {sreda_rz.r[K]};
+  vector<int> left_right = {0};
+  vector<double> x = {0, sreda_rz.r[END]};
 
-		//Генерация сетки по r
-	gen_1d_mesh(x, hx, kx, left_right, r);
-	splitting(r, sreda_rz.splitting[0]);
+  // Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ r
+  gen_1d_mesh(x, hx, kx, left_right, r);
+  splitting(r, sreda_rz.splitting[0]);
 
+  // Р“РµРЅРµСЂР°С†РёСЏ СЃРµС‚РєРё РїРѕ h
+  hx[0] = sreda_rz.z[H0];
+  kx[0] = sreda_rz.z[K];
+  x[1] = sreda_rz.z[END];
+  gen_1d_mesh(x, hx, kx, left_right, z);
+  splitting(z, sreda_rz.splitting[1]);
+  add_elements_z_edges(sreda, z);
 
-	//Генерация сетки по h
-	hx[0] = sreda_rz.z[H0];
-	kx[0] = sreda_rz.z[K];
-	x[1] = sreda_rz.z[END];
-	gen_1d_mesh(x, hx, kx, left_right, z);
-	splitting(z, sreda_rz.splitting[1]);
-	add_elements_z_edges(sreda, z);
+  kuzlov = r.size() * z.size();
+  kel = (r.size() - 1) * (z.size() - 1);
 
-
-	kuzlov = r.size() * z.size();
-	kel = (r.size() - 1) * (z.size() - 1);
-
-	printf("2D: kuzlov - %d ; kel - %d; r - %d, z - %d\n", kuzlov, kel, r.size(), z.size());
+  printf("2D: kuzlov - %d ; kel - %d; r - %d, z - %d\n", kuzlov, kel, r.size(), z.size());
 }
 
 void MESH::add_mesh(class MESH& mesh) {
-	x = vector_merge(x, mesh.x);
-	y = vector_merge(y, mesh.y);
-	z = vector_merge(z, mesh.z);
+  x = vector_merge(x, mesh.x);
+  y = vector_merge(y, mesh.y);
+  z = vector_merge(z, mesh.z);
 
-	kuzlov = x.size() * y.size() * z.size();
-	kel = (x.size() - 1) * (y.size() - 1) * (z.size() - 1);
+  kuzlov = x.size() * y.size() * z.size();
+  kel = (x.size() - 1) * (y.size() - 1) * (z.size() - 1);
 
-	printf("3D SUM NORMAL: kuzlov - %d ; kel - %d; x - %d ; y - %d, z - %d\n",
-		kuzlov, kel, x.size(), y.size(), z.size());
-	
+  printf("3D SUM NORMAL: kuzlov - %d ; kel - %d; x - %d ; y - %d, z - %d\n",
+         kuzlov, kel, x.size(), y.size(), z.size());
 }
